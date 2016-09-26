@@ -12,74 +12,82 @@ public class Control extends Application{
 	
 	private Scene scene;
 	private Stack<OpMode> opModeStack = new Stack<>();
-	private OpMode currentOpMode;
 	private int windowWidth = 1200;
 	private int windowHeight = 800;
 	private int lastFinishCode = -1;
 	
 	@Override
 	public void start(Stage primaryStage){
-		currentOpMode = new MainMenu();
-		currentOpMode.setControl(this);
+		OpMode menu = new MainMenu();
+		menu.setControl(this);
+		opModeStack.push(menu);
 		
-		scene = new Scene(currentOpMode.getPane(), windowWidth, windowHeight);
+		scene = new Scene(menu.getPane(), windowWidth, windowHeight);
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Elmer the Confused Ninja");
 		primaryStage.show();
-		currentOpMode.getPane().requestFocus();
-		currentOpMode.start();
+		menu.getPane().requestFocus();
+		menu.start();
 	}
 	
-	public void startMainMenu(){
-		startOpMode(new MainMenu());
+	public void startMainMenu(String filename){
+		startOpMode(new MainMenu(), filename);
 	}
 	
-	public void startStoryMode(){
-		startOpMode(new StoryMode());
+	public void startStoryMode(String filename){
+		startOpMode(new StoryMode(), filename);
 	}
 	
-	public void startPlatformer(String levelName){
-		startOpMode(new DummyMiniGame());
+	public void startPlatformer(String filename){
+		startOpMode(new Platformer(), filename);
 	}
 	
-	public void startPuzzle(String levelName){
-		startOpMode(new DummyMiniGame());
+	public void startPuzzle(String filename){
+		startOpMode(new Puzzle(), filename);
 	}
 	
-	public void startTopDown(String levelName){
-		startOpMode(new DummyMiniGame());
+	public void startTopDown(String filename){
+		startOpMode(new TopDown(), filename);
 	}
 	
-	private void startOpMode(OpMode opMode){
-		currentOpMode.pause();
-		opModeStack.push(currentOpMode);
-		currentOpMode = opMode;
-		currentOpMode.setControl(this);
-		scene.setRoot(currentOpMode.getPane());
-		currentOpMode.getPane().requestFocus();
-		currentOpMode.start();
+	public void startDummyMiniGame(String filename){
+		startOpMode(new DummyMiniGame(), filename);
+	}
+	
+	private void startOpMode(OpMode opMode, String filename){
+		opModeStack.peek().pause();
+		opModeStack.push(opMode);
+		opMode.setControl(this);
+		opMode.load(filename);
+		scene.setRoot(opMode.getPane());
+		opMode.getPane().requestFocus();
+		opMode.start();
 	}
 	
 	public void notifyOfOpModeCompletion(OpMode notifyingOpMode, int finishCode){
-		if(notifyingOpMode != currentOpMode){
-			// There's a problem because only the current OpMode should be calling this function
+		if(notifyingOpMode != opModeStack.peek()){
+			// Only the currentOpMode (the one at the top of the stack) should be calling this
+			// method. If a different OpMode is calling this method, there is a problem!
+			// In this case, display error message and terminate program
 			System.out.println("Control problem: Op Mode other than current is notifying of completion!");
 			Platform.exit();
+			return;
 		}
 		
-		currentOpMode.end();
+		opModeStack.peek().end();
+		opModeStack.pop();
+		System.out.println("Recieved finishCode: " + finishCode);
+		
 		if(opModeStack.isEmpty()){
 			// Main Menu should be the bottom of the stack. If it completes, then the whole application should end.
 			Platform.exit();
+			return;
 		}
 		
-		currentOpMode = opModeStack.pop();
-		scene.setRoot(currentOpMode.getPane());
-		currentOpMode.getPane().requestFocus();
-		currentOpMode.resume();
+		scene.setRoot(opModeStack.peek().getPane());
+		opModeStack.peek().getPane().requestFocus();
+		opModeStack.peek().resume();
 		lastFinishCode = finishCode;
-		
-		System.out.println("Recieved finishCode: " + finishCode);
 	}
 	
 	public int getLastFinishCode(){

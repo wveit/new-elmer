@@ -14,12 +14,27 @@ public class MainMenu implements OpMode{
 		Label label = new Label("--- Main Menu ---");
 		Button storyModeButton = new Button("StoryMode");
 		storyModeButton.setOnAction(e -> {
-			control.startStoryMode();
+			control.startStoryMode("story_mode");
 		});
 		
-		Button miniGameButton = new Button("MiniGame");	
-		miniGameButton.setOnAction(e -> {
+		Button dummyMiniGameButton = new Button("DummyMiniGame");	
+		dummyMiniGameButton.setOnAction(e -> {
+			control.startDummyMiniGame("dummy_string");
+		});
+		
+		Button platformerButton = new Button("Platformer");	
+		platformerButton.setOnAction(e -> {
 			control.startPlatformer("volcano_level");
+		});
+		
+		Button topDownButton = new Button("Top Down Game");	
+		topDownButton.setOnAction(e -> {
+			control.startTopDown("top_down_level");
+		});
+		
+		Button puzzleButton = new Button("Puzzle Game");	
+		puzzleButton.setOnAction(e -> {
+			control.startPuzzle("puzzle_level");
 		});
 		
 		Button exitButton = new Button("Exit");
@@ -27,7 +42,7 @@ public class MainMenu implements OpMode{
 			control.notifyOfOpModeCompletion(this, 1);
 		});
 		
-		pane.getChildren().addAll(label, storyModeButton, miniGameButton, exitButton);
+		pane.getChildren().addAll(label, storyModeButton, dummyMiniGameButton, platformerButton, topDownButton, puzzleButton, exitButton);
 	}
 	
 	@Override
@@ -58,5 +73,10 @@ public class MainMenu implements OpMode{
 	@Override
 	public void end() {
 
+	}
+
+	@Override
+	public void load(String filename) {
+		
 	}
 }

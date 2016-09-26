@@ -14,7 +14,14 @@ public class StoryMode implements OpMode{
 		Label label = new Label("--- Story Mode ---");
 		
 		Button miniGameButton = new Button("Start Mini Game");
+		miniGameButton.setOnAction(e->{
+			control.startDummyMiniGame("dummy_level");
+		});
+		
 		Button endStoryModeButton = new Button("End Story Mode");
+		endStoryModeButton.setOnAction(e->{
+			control.notifyOfOpModeCompletion(this, 1);
+		});
 		
 		pane.getChildren().addAll(label, miniGameButton, endStoryModeButton);
 	}
@@ -46,6 +53,11 @@ public class StoryMode implements OpMode{
 
 	@Override
 	public void end() {
+		
+	}
+
+	@Override
+	public void load(String filename) {
 		
 	}
 

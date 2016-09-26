@@ -62,4 +62,9 @@ public class DummyMiniGame implements OpMode{
 		
 	}
 
+	@Override
+	public void load(String filename) {
+		
+	}
+
 }
