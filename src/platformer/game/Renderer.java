@@ -73,6 +73,7 @@ public class Renderer {
 		for(Platform p : world.platformList)
 			render(p);
 		
+		Lava lava = null;
 		for(Enemy e : world.enemyList){
 			if(e instanceof LavaMonster)
 				render((LavaMonster)e);
@@ -80,6 +81,8 @@ public class Renderer {
 				render((Spikey)e);
 			else if(e instanceof Vulcor)
 				render((Vulcor)e);
+			else if(e instanceof Lava)
+				lava = (Lava)e;
 			else
 				render(e);
 		}
@@ -87,7 +90,8 @@ public class Renderer {
 		
 		render(world.player);
 		
-		render(world.lava);
+		if(lava != null)
+			render(lava);
 	}
 	
 	// !!!! come back to this... it's not nice

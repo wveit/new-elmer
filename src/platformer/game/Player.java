@@ -91,9 +91,7 @@ public class Player{
 			}
 		}
 		
-		if(rect.overlaps(world.lava.rect())){
-			isDead = true;
-		}
+
 		
 	}
 	

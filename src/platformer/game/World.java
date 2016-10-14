@@ -13,7 +13,6 @@ public class World {
 	public Rectangle rightBoundary = null;
 	public ArrayList<Platform> platformList = new ArrayList<>();
 	public ArrayList<Enemy> enemyList = new ArrayList<>();
-	public Lava lava = null;
 	
 	public World(){
 	}
@@ -24,7 +23,6 @@ public class World {
 		leftBoundary = null;
 		platformList.clear();
 		enemyList.clear();
-		lava = null;
 		
 		if(filename.equals("volcano_level.lvl")){
 			loadVolcano();
@@ -65,7 +63,7 @@ public class World {
 		enemyList.add(new Spikey(600, 600, 50, 50));
 		
 		player = new Player(250, 250, 50, 75);
-		lava = new Lava(0, -100 - height, width, height);
+		enemyList.add(new Lava(0, -100 - height, width, height));
 	}
 	
 	private void loadJungle(){
@@ -76,7 +74,6 @@ public class World {
 		
 		// update level entities
 		player.update(deltaTime, this);
-		lava.update(deltaTime, this);
 		
 		// remove dead enemies from the enemy list and update live enemies
 		for(int i = 0; i < enemyList.size(); i++){
