@@ -24,7 +24,7 @@ public class MainMenu implements OpMode{
 		
 		Button platformerButton = new Button("Platformer");	
 		platformerButton.setOnAction(e -> {
-			control.startPlatformer("volcano_level");
+			control.startPlatformer("volcano_level.lvl");
 		});
 		
 		Button topDownButton = new Button("Top Down Game");	
