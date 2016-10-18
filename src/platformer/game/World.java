@@ -1,6 +1,9 @@
 package platformer.game;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import platformer.engine.shape.Rectangle;
 
@@ -17,23 +20,95 @@ public class World {
 	public World(){
 	}
 	
-	public boolean load(String filename){
+	private void clear(){
 		player = null;
 		leftBoundary = null;
 		leftBoundary = null;
 		platformList.clear();
 		enemyList.clear();
-		
-		if(filename.equals("volcano_level.lvl")){
-			loadVolcano();
-			return true;
+	}
+	
+	private boolean privateLoad(String filename){
+		Scanner in = null;
+		try{
+			File file = new File(filename);
+			if(!file.exists())
+				System.out.println("can't find file");
+			in = new Scanner(file);
 		}
-		else if(filename.equals("jungle_level.lvl")){
-			loadVolcano();
-			return true;
-		}
-		else
+		catch(FileNotFoundException e){
 			return false;
+		}
+		
+		while(in.hasNext()){
+			loadEntity(in);
+		}
+		
+		in.close();
+		return true;
+	}
+	
+	private void loadEntity(Scanner in){
+		ArrayList<String> tokenList = new ArrayList<>();
+		String token = "";
+		while(!token.equals(";")){
+			token = in.next();
+			tokenList.add(token);
+		}
+		
+		System.out.println(tokenList.get(0));
+		
+		if(tokenList.get(0).equals("player"))
+			player = new Player(Integer.parseInt(tokenList.get(1)), Integer.parseInt(tokenList.get(2)), Integer.parseInt(tokenList.get(3)), Integer.parseInt(tokenList.get(4)));
+		else if(tokenList.get(0).equals("spikey"))
+			enemyList.add(new Spikey(Integer.parseInt(tokenList.get(1)), Integer.parseInt(tokenList.get(2)), Integer.parseInt(tokenList.get(3)), Integer.parseInt(tokenList.get(4))));
+		else if(tokenList.get(0).equals("lavaMonster"))
+			enemyList.add(new LavaMonster(Integer.parseInt(tokenList.get(1)), Integer.parseInt(tokenList.get(2)), Integer.parseInt(tokenList.get(3)), Integer.parseInt(tokenList.get(4))));
+		else if(tokenList.get(0).equals("vulcor"))
+			enemyList.add(new Vulcor(Integer.parseInt(tokenList.get(1)), Integer.parseInt(tokenList.get(2)), Integer.parseInt(tokenList.get(3)), Integer.parseInt(tokenList.get(4))));
+		else if(tokenList.get(0).equals("platform"))
+			platformList.add(new Platform(Integer.parseInt(tokenList.get(1)), Integer.parseInt(tokenList.get(2)), Integer.parseInt(tokenList.get(3)), Integer.parseInt(tokenList.get(4))));
+		else if(tokenList.get(0).equals("leftBoundary"))
+			leftBoundary = new Rectangle(Integer.parseInt(tokenList.get(1)), Integer.parseInt(tokenList.get(2)), Integer.parseInt(tokenList.get(3)), Integer.parseInt(tokenList.get(4)));
+		else if(tokenList.get(0).equals("rightBoundary"))
+			rightBoundary = new Rectangle(Integer.parseInt(tokenList.get(1)), Integer.parseInt(tokenList.get(2)), Integer.parseInt(tokenList.get(3)), Integer.parseInt(tokenList.get(4)));
+		else if(tokenList.get(0).equals("lava"))
+			enemyList.add(new Lava(Integer.parseInt(tokenList.get(1)), Integer.parseInt(tokenList.get(2)), Integer.parseInt(tokenList.get(3)), Integer.parseInt(tokenList.get(4))));
+		else if(tokenList.get(0).equals("gravity"))
+			gravity = Integer.parseInt(tokenList.get(1));
+		else{
+			System.out.println("couldn't add" + tokenList.get(0));
+			
+		}
+			
+			
+	}
+	
+	public static void main(String[] args){
+		World world = new World();
+		world.load("assets/platformer/jungle_level.lvl");
+		
+
+		if(world.player == null)
+			System.out.println("player is null");
+		else
+			System.out.println("player is good");
+	}
+	
+	public boolean load(String filename){
+		clear();
+		
+		privateLoad("assets/platformer/jungle_level.lvl");
+		
+		
+		return true;
+		
+//		if(filename.equals("volcano_level.lvl")){
+//			loadVolcano();
+//			return true;
+//		}
+//		
+//		else return privateLoad(filename);
 	}
 	
 	private void loadVolcano(){
@@ -66,9 +141,7 @@ public class World {
 		enemyList.add(new Lava(0, -100 - height, width, height));
 	}
 	
-	private void loadJungle(){
-		
-	}
+
 	
 	public void update(double deltaTime){
 		
