@@ -51,8 +51,9 @@ public class Renderer {
 			platformImage = new Image(new File("assets/platformer/platform.png").toURI().toURL().toString());
 			gameOverImage = new Image(new File("assets/platformer/gameover.png").toURI().toURL().toString());
 		
-		}catch(Exception e){
-			System.out.println("Renderer2 had problems loading images.");
+		} 
+		catch(Exception e){
+			System.out.println("Renderer had problems loading images.");
 		}
 		
 	}
@@ -66,7 +67,10 @@ public class Renderer {
 		if(viewport.minY() < 0)
 			viewport.setY(0);
 		
-		
+		render(world, viewport);
+	}
+	
+	public void render(World world, Rectangle viewport){
 		// draw each of the world's items in terms of the viewport
 		renderBackground();
 		
@@ -86,9 +90,9 @@ public class Renderer {
 			else
 				render(e);
 		}
-			
 		
-		render(world.player);
+		if(world.player != null)
+			render(world.player);
 		
 		if(lava != null)
 			render(lava);

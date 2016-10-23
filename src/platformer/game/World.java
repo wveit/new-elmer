@@ -2,6 +2,7 @@ package platformer.game;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -26,6 +27,61 @@ public class World {
 		leftBoundary = null;
 		platformList.clear();
 		enemyList.clear();
+	}
+	
+	public void save(String filename){
+//		leftBoundary -50 0 50 10000 ;
+//		rightBoundary 1200 0 50 10000 ;
+//		gravity -1000 ;
+//		player 250 250 50 75 ;
+//		platform 0 0 1200 50 ;
+//		platform 500 500 250 50 ;
+//		lavaMonster 800 100 200 200 ;
+		
+		PrintWriter pw = null;
+		File file = new File(filename);
+		try{
+		pw = new PrintWriter(file);
+		}
+		catch(FileNotFoundException e){
+			System.out.println("World.save(...) FileNotFoundException");
+		}
+		
+		pw.println("gravity " + gravity + " ;");
+		
+		Rectangle r = player.rect();
+		pw.println("player " + r.minX() + " " + r.minY() + " " + r.width() + " " + r.height() + " ;");
+		
+		r = leftBoundary;
+		pw.println("leftBoundary " + r.minX() + " " + r.minY() + " " + r.width() + " " + r.height() + " ;");
+		
+		r = rightBoundary;
+		pw.println("rightBoundary " + r.minX() + " " + r.minY() + " " + r.width() + " " + r.height() + " ;");
+		
+		for(Platform p : platformList){
+			r = p.rect();
+			pw.println("platform " + r.minX() + " " + r.minY() + " " + r.width() + " " + r.height() + " ;");
+		}
+		
+		for(Enemy e : enemyList){
+			r = e.rect();
+			pw.println(enemyName(e) + " " + r.minX() + " " + r.minY() + " " + r.width() + " " + r.height() + " ;");
+		}
+		
+		pw.close();
+	}
+	
+	private String enemyName(Enemy e){
+		if(e instanceof LavaMonster)
+			return "lavaMonster";
+		else if(e instanceof Spikey)
+			return "spikey";
+		else if(e instanceof Vulcor)
+			return "vulcor";
+		else if(e instanceof Lava)
+			return "lava";
+		else
+			return "monster";
 	}
 	
 	private boolean privateLoad(String filename){
@@ -59,23 +115,23 @@ public class World {
 		System.out.println(tokenList.get(0));
 		
 		if(tokenList.get(0).equals("player"))
-			player = new Player(Integer.parseInt(tokenList.get(1)), Integer.parseInt(tokenList.get(2)), Integer.parseInt(tokenList.get(3)), Integer.parseInt(tokenList.get(4)));
+			player = new Player(Double.parseDouble(tokenList.get(1)), Double.parseDouble(tokenList.get(2)), Double.parseDouble(tokenList.get(3)), Double.parseDouble(tokenList.get(4)));
 		else if(tokenList.get(0).equals("spikey"))
-			enemyList.add(new Spikey(Integer.parseInt(tokenList.get(1)), Integer.parseInt(tokenList.get(2)), Integer.parseInt(tokenList.get(3)), Integer.parseInt(tokenList.get(4))));
+			enemyList.add(new Spikey(Double.parseDouble(tokenList.get(1)), Double.parseDouble(tokenList.get(2)), Double.parseDouble(tokenList.get(3)), Double.parseDouble(tokenList.get(4))));
 		else if(tokenList.get(0).equals("lavaMonster"))
-			enemyList.add(new LavaMonster(Integer.parseInt(tokenList.get(1)), Integer.parseInt(tokenList.get(2)), Integer.parseInt(tokenList.get(3)), Integer.parseInt(tokenList.get(4))));
+			enemyList.add(new LavaMonster(Double.parseDouble(tokenList.get(1)), Double.parseDouble(tokenList.get(2)), Double.parseDouble(tokenList.get(3)), Double.parseDouble(tokenList.get(4))));
 		else if(tokenList.get(0).equals("vulcor"))
-			enemyList.add(new Vulcor(Integer.parseInt(tokenList.get(1)), Integer.parseInt(tokenList.get(2)), Integer.parseInt(tokenList.get(3)), Integer.parseInt(tokenList.get(4))));
+			enemyList.add(new Vulcor(Double.parseDouble(tokenList.get(1)), Double.parseDouble(tokenList.get(2)), Double.parseDouble(tokenList.get(3)), Double.parseDouble(tokenList.get(4))));
 		else if(tokenList.get(0).equals("platform"))
-			platformList.add(new Platform(Integer.parseInt(tokenList.get(1)), Integer.parseInt(tokenList.get(2)), Integer.parseInt(tokenList.get(3)), Integer.parseInt(tokenList.get(4))));
+			platformList.add(new Platform(Double.parseDouble(tokenList.get(1)), Double.parseDouble(tokenList.get(2)), Double.parseDouble(tokenList.get(3)), Double.parseDouble(tokenList.get(4))));
 		else if(tokenList.get(0).equals("leftBoundary"))
-			leftBoundary = new Rectangle(Integer.parseInt(tokenList.get(1)), Integer.parseInt(tokenList.get(2)), Integer.parseInt(tokenList.get(3)), Integer.parseInt(tokenList.get(4)));
+			leftBoundary = new Rectangle(Double.parseDouble(tokenList.get(1)), Double.parseDouble(tokenList.get(2)), Double.parseDouble(tokenList.get(3)), Double.parseDouble(tokenList.get(4)));
 		else if(tokenList.get(0).equals("rightBoundary"))
-			rightBoundary = new Rectangle(Integer.parseInt(tokenList.get(1)), Integer.parseInt(tokenList.get(2)), Integer.parseInt(tokenList.get(3)), Integer.parseInt(tokenList.get(4)));
+			rightBoundary = new Rectangle(Double.parseDouble(tokenList.get(1)), Double.parseDouble(tokenList.get(2)), Double.parseDouble(tokenList.get(3)), Double.parseDouble(tokenList.get(4)));
 		else if(tokenList.get(0).equals("lava"))
-			enemyList.add(new Lava(Integer.parseInt(tokenList.get(1)), Integer.parseInt(tokenList.get(2)), Integer.parseInt(tokenList.get(3)), Integer.parseInt(tokenList.get(4))));
+			enemyList.add(new Lava(Double.parseDouble(tokenList.get(1)), Double.parseDouble(tokenList.get(2)), Double.parseDouble(tokenList.get(3)), Double.parseDouble(tokenList.get(4))));
 		else if(tokenList.get(0).equals("gravity"))
-			gravity = Integer.parseInt(tokenList.get(1));
+			gravity = Double.parseDouble(tokenList.get(1));
 		else{
 			System.out.println("couldn't add" + tokenList.get(0));
 			
@@ -98,7 +154,7 @@ public class World {
 	public boolean load(String filename){
 		clear();
 		
-		privateLoad("assets/platformer/jungle_level.lvl");
+		privateLoad("assets/platformer/blah.lvl");
 		
 		
 		return true;

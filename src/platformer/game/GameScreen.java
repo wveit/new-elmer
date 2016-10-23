@@ -60,6 +60,7 @@ public class GameScreen extends MyScreen{
 				media = new Media("file:" + file.getAbsolutePath());
 			}catch(Exception e){
 				System.out.println("Exception while loading audio.");
+				e.printStackTrace();
 			}
 			
 			mediaPlayer = new MediaPlayer(media);

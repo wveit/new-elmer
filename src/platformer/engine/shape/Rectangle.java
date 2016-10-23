@@ -16,6 +16,22 @@ public class Rectangle {
 		this.height = height;
 	}
 	
+	public Rectangle(Rectangle other){
+		this.x = other.x;
+		this.y = other.y;
+		this.width = other.width;
+		this.height = other.height;
+	}
+	
+	public void reset(double x, double y, double width, double height){
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+	}
+	
+
+	
 	public void setPos(double x, double y){
 		this.x = x;
 		this.y = y;
