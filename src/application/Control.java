@@ -9,6 +9,8 @@ import javafx.stage.Stage;
 
 
 public class Control extends Application{
+
+	public static class FinishCode{ public static final int WIN = 0, LOSS = 1, ERROR = 2; }
 	
 	private Scene scene;
 	private Stack<OpMode> opModeStack = new Stack<>();
