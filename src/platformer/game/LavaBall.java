@@ -24,10 +24,12 @@ public class LavaBall implements Enemy{
 			
 			for(Platform p : world.platformList){
 				if(p.rect().overlaps(rect)){
-					actionMode = 1;
-					
 					CollisionInfo ci = Collision.resolve(rect, p.rect());
 					rect.move(ci.getX() * ci.getDistance(), ci.getY() * ci.getDistance());
+					
+					if(ci.getY() == 1)
+						actionMode = 1;
+					
 				}
 			}
 		}

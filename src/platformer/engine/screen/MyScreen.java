@@ -7,6 +7,7 @@ import javafx.animation.Timeline;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
 public class MyScreen extends Canvas{
@@ -34,6 +35,21 @@ public class MyScreen extends Canvas{
             }
         });
 		
+		this.setOnMousePressed(e->{
+			mousePressed(e);
+		});
+		
+		this.setOnMouseReleased(e->{
+			mouseReleased(e);
+		});
+		
+		this.setOnMouseMoved(e->{
+			mouseMoved(e);
+		});
+		
+		this.setOnMouseDragged(e->{
+			mouseDragged(e);
+		});
 
 	}
 	
@@ -56,6 +72,22 @@ public class MyScreen extends Canvas{
 	}
 	
 	public void keyReleased(KeyEvent e){
+		
+	}
+	
+	public void mousePressed(MouseEvent e){
+		
+	}
+	
+	public void mouseReleased(MouseEvent e){
+		
+	}
+	
+	public void mouseMoved(MouseEvent e){
+		
+	}
+	
+	public void mouseDragged(MouseEvent e){
 		
 	}
 }

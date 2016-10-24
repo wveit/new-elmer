@@ -11,7 +11,7 @@ import javafx.scene.image.Image;
 
 public class Renderer {
 	private GraphicsContext gc;
-	private Rectangle viewport;
+	private ScreenWorldRectConverter converter;
 	
 	private Image ninjaImage;
 	private Image lavaMonsterImage;
@@ -24,10 +24,9 @@ public class Renderer {
 	private SpriteAnimator ninjaAnimator;
 	private SpriteAnimator lavaMonsterAnimator;
 	
-	public Renderer(GraphicsContext gc, double width, double height){
+	public Renderer(GraphicsContext gc, ScreenWorldRectConverter converter){
 		this.gc = gc;
-
-		viewport = new Rectangle(0, 0, width, height);
+		this.converter = converter;
 		
 		// load images		
 		try{
@@ -51,28 +50,25 @@ public class Renderer {
 			platformImage = new Image(new File("assets/platformer/platform.png").toURI().toURL().toString());
 			gameOverImage = new Image(new File("assets/platformer/gameover.png").toURI().toURL().toString());
 		
-		}catch(Exception e){
-			System.out.println("Renderer2 had problems loading images.");
+		} 
+		catch(Exception e){
+			System.out.println("Renderer had problems loading images.");
 		}
 		
 	}
 	
 	
 	public void render(World world){
-		
-		// update viewport based on player position
-		double diff = viewport.centerY() - world.player.rect().centerY();
-		viewport.move(0, -diff);
-		if(viewport.minY() < 0)
-			viewport.setY(0);
-		
-		
-		// draw each of the world's items in terms of the viewport
+		// Draw Background
 		renderBackground();
 		
+		// Draw platforms
 		for(Platform p : world.platformList)
 			render(p);
 		
+		// Draw enemies
+		// Special logic for Lava so that it will be drawn last (it should always be on top)
+		Lava lava = null;
 		for(Enemy e : world.enemyList){
 			if(e instanceof LavaMonster)
 				render((LavaMonster)e);
@@ -80,37 +76,42 @@ public class Renderer {
 				render((Spikey)e);
 			else if(e instanceof Vulcor)
 				render((Vulcor)e);
+			else if(e instanceof Lava)
+				lava = (Lava)e;
 			else
 				render(e);
 		}
-			
+		if(lava != null)
+			render(lava);
 		
-		render(world.player);
-		
-		render(world.lava);
+		// Draw Player
+		if(world.player != null)
+			render(world.player);
+
 	}
 	
-	// !!!! come back to this... it's not nice
+
 	public void renderBackground(){
-		// find src Rectangle
-		final double levelHeight = 5000;
-		final double scrollRatio = 0.04;
-		
-		double srcWidth = backgroundImage.getWidth();
-		double srcHeight = srcWidth * viewport.height() / viewport.width();
-		double srcY = backgroundImage.getHeight() - srcHeight - viewport.minY() * scrollRatio;
-		Rectangle src = new Rectangle(0, srcY, backgroundImage.getWidth(), srcHeight );
+
+		double worldTopOfBackground = 10000;
 		
 		// find dest Rectangle
-		Rectangle dest = transromRect(viewport);
+		Rectangle dest = new Rectangle(converter.getScreen());
+		
+		// find src Rectangle
+		Rectangle src = new Rectangle();
+		src.setWidth(backgroundImage.getWidth());
+		src.setHeight(converter.getScreen().height() * backgroundImage.getWidth() / converter.getScreen().width());
+		src.setY(backgroundImage.getHeight() - src.height() - (worldTopOfBackground - converter.getWorldViewport().minY()) / worldTopOfBackground);
 		
 		// draw
 		draw(backgroundImage, src, dest);
 	}
 	
 	public void render(LavaMonster m){
-		Rectangle r = transromRect(m.rect());
-		if((int)m.rect().minX() / 40 % 2 == 0)
+		Rectangle r = converter.worldRectToScreenRect(m.rect());
+		
+		if((int)Math.abs(r.minX()) / 40 % 2 == 0)
 			lavaMonsterAnimator.setFlippedHorizontal(true);
 		else
 			lavaMonsterAnimator.setFlippedHorizontal(false);
@@ -119,12 +120,13 @@ public class Renderer {
 	}
 	
 	public void render(Spikey s){
-		Rectangle r = transromRect(s.rect());
+		Rectangle r = converter.worldRectToScreenRect(s.rect());
 		draw(spikeyImage, new Rectangle(0, 0, 75, 110), r);
 	}
 	
 	public void render(Vulcor v){
-		Rectangle r = transromRect(v.rect());
+		Rectangle r = converter.worldRectToScreenRect(v.rect());
+		
 		if(v.actionMode() == Vulcor.ActionMode.READY)
 			draw(vulcorImage, new Rectangle(100, 0, 100, 100), r);
 		else
@@ -132,21 +134,22 @@ public class Renderer {
 	}
 	
 	public void render(Enemy enemy){
-		Rectangle r = transromRect(enemy.rect());
+		Rectangle r = converter.worldRectToScreenRect(enemy.rect());
+		
 		gc.setFill(Color.BROWN);
 		gc.fillRect(r.minX(), r.minY(), r.width(), r.height());
 	}
 	
 	public void render(Player player){
-		Rectangle r = transromRect(player.rect());
+		Rectangle r = converter.worldRectToScreenRect(player.rect());
 		
 		if(player.vX() < -0.1){
 			ninjaAnimator.setFlippedHorizontal(true);
-			ninjaAnimator.setRect((int)player.rect().minX() / 30 % 4);
+			ninjaAnimator.setRect((int)Math.abs(player.rect().minX()) / 30 % 4);
 		}
 		else if(player.vX() > 0.1){
 			ninjaAnimator.setFlippedHorizontal(false);
-			ninjaAnimator.setRect((int)player.rect().minX() / 30 % 4);
+			ninjaAnimator.setRect((int)Math.abs(player.rect().minX()) / 30 % 4);
 		}
 		else{
 			ninjaAnimator.setRect(0);
@@ -156,23 +159,22 @@ public class Renderer {
 	}
 	
 	public void render(Platform platform){
-		Rectangle r = transromRect(platform.rect());
+		Rectangle r = converter.worldRectToScreenRect(platform.rect());
+		
 		draw(platformImage, new Rectangle(0, 0, Math.min(r.width(), 400), r.height()), r);
+//		gc.setFill(Color.BROWN);
+//		gc.fillRect(r.minX(), r.minY(), r.width(), r.height());
 	}
 	
 	public void render(Lava lava){
-		Rectangle r = transromRect(lava.rect());
+		Rectangle r = converter.worldRectToScreenRect(lava.rect());
+		
 		gc.setFill(Color.ORANGE);
 		gc.fillRect(r.minX(), r.minY(), r.width(), r.height());
 	}
-	
-	
-	private Rectangle transromRect(Rectangle r){
-		return new Rectangle(r.minX() - viewport.minX(), viewport.maxY() - r.maxY(), r.width(), r.height());
-	}
 
 	public void renderGameOver(){
-		gc.drawImage(gameOverImage, 0, 0, viewport.width(), viewport.height());
+		gc.drawImage(gameOverImage, 0, 0, converter.getScreen().width(), converter.getScreen().height());
 	}
 	
 	private void draw(Image img, Rectangle srcRect, Rectangle destRect){

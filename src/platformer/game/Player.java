@@ -1,7 +1,5 @@
 package platformer.game;
 
-import java.util.ArrayList;
-
 import platformer.engine.physics.Collision;
 import platformer.engine.physics.CollisionInfo;
 import platformer.engine.shape.Rectangle;
@@ -91,9 +89,7 @@ public class Player{
 			}
 		}
 		
-		if(rect.overlaps(world.lava.rect())){
-			isDead = true;
-		}
+
 		
 	}
 	

@@ -5,6 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.media.*;
+import platformer.engine.shape.Rectangle;
 import javafx.util.Duration;
 import platformer.engine.screen.MyScreen;
 
@@ -15,6 +16,7 @@ public class GameScreen extends MyScreen{
 	private World world;
 	private Renderer renderer;
 	private MediaPlayer mediaPlayer;
+	ScreenWorldRectConverter converter;
 	
 	private long lastNanoseconds = 0;
 	private int logicFPS = 60;
@@ -24,7 +26,8 @@ public class GameScreen extends MyScreen{
 		super(width, height);
 		
 		world = new World();
-		renderer = new Renderer(this.getGraphicsContext2D(), width, height);
+		converter = new ScreenWorldRectConverter(new Rectangle(0, 0, width, height), new Rectangle(0, 0, width, height));
+		renderer = new Renderer(this.getGraphicsContext2D(), converter);
 		
 		setUpGameMusic();
 	}
@@ -60,6 +63,7 @@ public class GameScreen extends MyScreen{
 				media = new Media("file:" + file.getAbsolutePath());
 			}catch(Exception e){
 				System.out.println("Exception while loading audio.");
+				e.printStackTrace();
 			}
 			
 			mediaPlayer = new MediaPlayer(media);
@@ -107,6 +111,7 @@ public class GameScreen extends MyScreen{
 			// Draw
 			GraphicsContext gc = this.getGraphicsContext2D();
 			gc.clearRect(0, 0, getWidth(), getHeight());
+			converter.getWorldViewport().setY(Math.max(0, world.player.rect().centerY() - converter.getWorldViewport().height() / 2));
 			renderer.render(world);
 
 		}
