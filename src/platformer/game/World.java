@@ -30,13 +30,6 @@ public class World {
 	}
 	
 	public void save(String filename){
-//		leftBoundary -50 0 50 10000 ;
-//		rightBoundary 1200 0 50 10000 ;
-//		gravity -1000 ;
-//		player 250 250 50 75 ;
-//		platform 0 0 1200 50 ;
-//		platform 500 500 250 50 ;
-//		lavaMonster 800 100 200 200 ;
 		
 		PrintWriter pw = null;
 		File file = new File(filename);
@@ -88,8 +81,10 @@ public class World {
 		Scanner in = null;
 		try{
 			File file = new File(filename);
-			if(!file.exists())
+			if(!file.exists()){
 				System.out.println("can't find file");
+				return false;
+			}
 			in = new Scanner(file);
 		}
 		catch(FileNotFoundException e){
@@ -112,8 +107,6 @@ public class World {
 			tokenList.add(token);
 		}
 		
-		System.out.println(tokenList.get(0));
-		
 		if(tokenList.get(0).equals("player"))
 			player = new Player(Double.parseDouble(tokenList.get(1)), Double.parseDouble(tokenList.get(2)), Double.parseDouble(tokenList.get(3)), Double.parseDouble(tokenList.get(4)));
 		else if(tokenList.get(0).equals("spikey"))
@@ -133,27 +126,19 @@ public class World {
 		else if(tokenList.get(0).equals("gravity"))
 			gravity = Double.parseDouble(tokenList.get(1));
 		else{
-			System.out.println("couldn't add" + tokenList.get(0));
+			System.out.println("World.loadEntity(...): couldn't add " + tokenList.get(0));
 			
 		}
 			
 			
 	}
 	
-	public static void main(String[] args){
-		World world = new World();
-		world.load("assets/platformer/jungle_level.lvl");
-		
 
-		if(world.player == null)
-			System.out.println("player is null");
-		else
-			System.out.println("player is good");
-	}
 	
 	public boolean load(String filename){
 		clear();
 		
+		//loadVolcano();
 		privateLoad("assets/platformer/blah.lvl");
 		
 		

@@ -1,6 +1,5 @@
 package platformer.level;
 
-import java.util.ArrayList;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
@@ -17,25 +16,21 @@ public class LevelScreen extends MyScreen{
 	private World world = new World();
 	private int entityCode = 0; // 0-player, 1-platform, 2-lavaMonster
 	private boolean leftMouseDown = false;
-	private Rectangle worldViewport = null;
 	private Rectangle screenDragRect = new Rectangle();
-//	private Renderer2 renderer = null;
-//	private ArrayList<Rectangle> rList = new ArrayList<>();
+	private ScreenWorldRectConverter rectConverter = null;
+	private Renderer renderer = null;
 	
 	public LevelScreen(int width, int height) {
 		super(width, height);
-		worldViewport = new Rectangle(0, 0, width, height);
-//		renderer = new Renderer2(this.getGraphicsContext2D(), width, height);
+		rectConverter = new ScreenWorldRectConverter(new Rectangle(0, 0, width, height), new Rectangle(0, 0, width, height));
 		world.leftBoundary = new Rectangle(); world.rightBoundary = new Rectangle(); world.gravity = -1000;
+		renderer = new Renderer(this.getGraphicsContext2D(), rectConverter);
 		this.start();
 	}
 	
 	private void inputEntity(int code, Rectangle screenRect){
-		Rectangle r = screenRectToWorldRect(properRect(screenRect));
-		
-//		System.out.println("Adding rect: " + r.minX() + "  " + r.minY() + "  " + r.width() + "  " + r.height());
-//		rList.add(r);
-		
+		Rectangle r = rectConverter.screenRectToWorldRect(rectConverter.properRect(screenRect));
+	
 		if(entityCode == 0)
 			world.player = new Player(r.minX(), r.minY(), r.width(), r.height());
 		else if(entityCode == 1)
@@ -60,79 +55,14 @@ public class LevelScreen extends MyScreen{
 		GraphicsContext gc = getGraphicsContext2D();
 		gc.clearRect(0, 0, width, height);
 		
-		Rectangle r;
-		
-		if(world.player != null){
-			gc.setFill(Color.BLUE);
-			r = worldRectToScreenRect(world.player.rect());
-			gc.fillRect(r.minX(), r.minY(), r.width(), r.height());
-		}
-		
-		gc.setFill(Color.GREEN);
-		for(Enemy e : world.enemyList){
-			r = worldRectToScreenRect(e.rect());
-			gc.fillRect(r.minX(), r.minY(), r.width(), r.height());
-		}
-		
-		gc.setFill(Color.BROWN);
-		for(Platform p : world.platformList){
-			r = worldRectToScreenRect(p.rect());
-			gc.fillRect(r.minX(), r.minY(), r.width(), r.height());			
-		}
-		
-//		gc.setStroke(Color.RED);
-//		for(Rectangle rect : rList){
-//			Rectangle temp = worldRectToScreenRect(rect);
-//			gc.strokeRect(temp.minX(), temp.minY(), temp.width(), temp.height());
-//		}
+		renderer.render(world);
 		
 		gc.setStroke(Color.BLACK);
 		if(leftMouseDown){
-			Rectangle temp = properRect(screenDragRect);
+			Rectangle temp = rectConverter.properRect(screenDragRect);
 			gc.strokeRect(temp.minX(), temp.minY(), temp.width(), temp.height());
 		}
 				
-	}
-	
-	
-	///////////////////////////////////////////////////
-	//
-	//			Rectangle Conversion Methods
-	//
-	///////////////////////////////////////////////////
-	
-	public Rectangle screenRectToWorldRect(Rectangle r){
-		return new Rectangle(
-			r.minX() + worldViewport.minX(), 
-			this.getHeight() - r.maxY() + worldViewport.minY(), 
-			r.width(), 
-			r.height()
-		);
-	}
-	
-	public Rectangle worldRectToScreenRect(Rectangle r){
-		return new Rectangle(
-			r.minX() - worldViewport.minX(), 
-			this.getHeight() - r.maxY() + worldViewport.minY(), 
-			r.width(), 
-			r.height()
-		);
-	}
-	
-	public Rectangle properRect(Rectangle inputRect){
-		Rectangle temp = new Rectangle(inputRect);
-		
-		if(temp.width() < 0){
-			temp.setX( temp.maxX() );
-			temp.setWidth( temp.width() * -1 );
-		}
-		
-		if(temp.height() < 0){
-			temp.setY( temp.maxY() );
-			temp.setHeight( temp.height() * -1 );
-		}
-		
-		return temp;
 	}
 	
 	///////////////////////////////////////////////////
@@ -157,13 +87,13 @@ public class LevelScreen extends MyScreen{
 		
 		// change which part of the game world is displayed in window
 		else if(e.getCode() == KeyCode.LEFT)
-			worldViewport.move(-10, 0);
+			rectConverter.getWorldViewport().move(-10, 0);
 		else if(e.getCode() == KeyCode.RIGHT)
-			worldViewport.move(10, 0);
+			rectConverter.getWorldViewport().move(10, 0);
 		else if(e.getCode() == KeyCode.UP)
-			worldViewport.move(0, 10);
+			rectConverter.getWorldViewport().move(0, 10);
 		else if(e.getCode() == KeyCode.DOWN)
-			worldViewport.move(0, -10);
+			rectConverter.getWorldViewport().move(0, -10);
 		
 		// save [& load]
 		else if(e.getCode() == KeyCode.S)
