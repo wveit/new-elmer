@@ -59,12 +59,15 @@ public class Renderer {
 	
 	
 	public void render(World world){
-		// draw each of the world's items in terms of the viewport
+		// Draw Background
 		renderBackground();
 		
+		// Draw platforms
 		for(Platform p : world.platformList)
 			render(p);
 		
+		// Draw enemies
+		// Special logic for Lava so that it will be drawn last (it should always be on top)
 		Lava lava = null;
 		for(Enemy e : world.enemyList){
 			if(e instanceof LavaMonster)
@@ -78,36 +81,37 @@ public class Renderer {
 			else
 				render(e);
 		}
-		
-		if(world.player != null)
-			render(world.player);
-		
 		if(lava != null)
 			render(lava);
+		
+		// Draw Player
+		if(world.player != null)
+			render(world.player);
+
 	}
 	
-	// !!!! come back to this... it's not nice
+
 	public void renderBackground(){
-//		// find src Rectangle
-//		final double levelHeight = 5000;
-//		final double scrollRatio = 0.04;
-//		
-//		double srcWidth = backgroundImage.getWidth();
-//		double srcHeight = srcWidth * viewport.height() / viewport.width();
-//		double srcY = backgroundImage.getHeight() - srcHeight - viewport.minY() * scrollRatio;
-//		Rectangle src = new Rectangle(0, srcY, backgroundImage.getWidth(), srcHeight );
-//		
-//		// find dest Rectangle
-//		Rectangle dest = transromRect(viewport);
-//		
-//		// draw
-//		draw(backgroundImage, src, dest);
+
+		double worldTopOfBackground = 10000;
+		
+		// find dest Rectangle
+		Rectangle dest = new Rectangle(converter.getScreen());
+		
+		// find src Rectangle
+		Rectangle src = new Rectangle();
+		src.setWidth(backgroundImage.getWidth());
+		src.setHeight(converter.getScreen().height() * backgroundImage.getWidth() / converter.getScreen().width());
+		src.setY(backgroundImage.getHeight() - src.height() - (worldTopOfBackground - converter.getWorldViewport().minY()) / worldTopOfBackground);
+		
+		// draw
+		draw(backgroundImage, src, dest);
 	}
 	
 	public void render(LavaMonster m){
 		Rectangle r = converter.worldRectToScreenRect(m.rect());
 		
-		if( Math.floor(r.minX()) / 40 % 2 == 0)
+		if((int)Math.abs(r.minX()) / 40 % 2 == 0)
 			lavaMonsterAnimator.setFlippedHorizontal(true);
 		else
 			lavaMonsterAnimator.setFlippedHorizontal(false);
@@ -141,11 +145,11 @@ public class Renderer {
 		
 		if(player.vX() < -0.1){
 			ninjaAnimator.setFlippedHorizontal(true);
-			ninjaAnimator.setRect((int)player.rect().minX() / 30 % 4);
+			ninjaAnimator.setRect((int)Math.abs(player.rect().minX()) / 30 % 4);
 		}
 		else if(player.vX() > 0.1){
 			ninjaAnimator.setFlippedHorizontal(false);
-			ninjaAnimator.setRect((int)player.rect().minX() / 30 % 4);
+			ninjaAnimator.setRect((int)Math.abs(player.rect().minX()) / 30 % 4);
 		}
 		else{
 			ninjaAnimator.setRect(0);
@@ -157,9 +161,9 @@ public class Renderer {
 	public void render(Platform platform){
 		Rectangle r = converter.worldRectToScreenRect(platform.rect());
 		
-		//draw(platformImage, new Rectangle(0, 0, Math.min(r.width(), 400), r.height()), r);
-		gc.setFill(Color.BROWN);
-		gc.fillRect(r.minX(), r.minY(), r.width(), r.height());
+		draw(platformImage, new Rectangle(0, 0, Math.min(r.width(), 400), r.height()), r);
+//		gc.setFill(Color.BROWN);
+//		gc.fillRect(r.minX(), r.minY(), r.width(), r.height());
 	}
 	
 	public void render(Lava lava){

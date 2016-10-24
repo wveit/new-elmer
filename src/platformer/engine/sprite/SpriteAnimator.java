@@ -70,6 +70,21 @@ public class SpriteAnimator {
 
 	
 	public void draw(GraphicsContext gc, Rectangle destRect, int modeNum, int rectNum){
+		
+		if(modeNum >= rectMatrix.size() || rectNum >= rectMatrix.get(modeNum).size()){
+			System.out.println("# modes: " + rectMatrix.size() + "  modeNum: " + modeNum + "  # rects: " + rectMatrix.get(modeNum) + "  rectNum: " + rectNum);
+			return;
+		}
+		
+		if(modeNum < 0){
+			System.out.println("modeNum: " + modeNum);
+			return;
+		}
+		
+		if(rectNum < 0){
+			System.out.println("rectNum: " + rectNum);
+			return;
+		}
 		Rectangle srcRect = rectMatrix.get(modeNum).get(rectNum);
 		
 		if(showBox)
@@ -87,6 +102,8 @@ public class SpriteAnimator {
 		else{
 			gc.drawImage(img, srcRect.maxX(), srcRect.maxY(), -srcRect.width(), -srcRect.height(), destRect.minX(), destRect.minY(), destRect.width(), destRect.height());
 		}
+		
+
 		
 	}
 	

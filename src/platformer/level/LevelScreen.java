@@ -7,6 +7,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import platformer.engine.screen.MyScreen;
 import platformer.engine.shape.Rectangle;
 import platformer.game.*;
@@ -19,6 +20,7 @@ public class LevelScreen extends MyScreen{
 	private Rectangle screenDragRect = new Rectangle();
 	private ScreenWorldRectConverter rectConverter = null;
 	private Renderer renderer = null;
+	private Stage stage;
 	
 	public LevelScreen(int width, int height) {
 		super(width, height);
@@ -26,6 +28,9 @@ public class LevelScreen extends MyScreen{
 		world.leftBoundary = new Rectangle(); world.rightBoundary = new Rectangle(); world.gravity = -1000;
 		renderer = new Renderer(this.getGraphicsContext2D(), rectConverter);
 		this.start();
+		
+//		stage = new Stage();
+//		stage.show();
 	}
 	
 	private void inputEntity(int code, Rectangle screenRect){
@@ -62,7 +67,7 @@ public class LevelScreen extends MyScreen{
 			Rectangle temp = rectConverter.properRect(screenDragRect);
 			gc.strokeRect(temp.minX(), temp.minY(), temp.width(), temp.height());
 		}
-				
+	
 	}
 	
 	///////////////////////////////////////////////////
