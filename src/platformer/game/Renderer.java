@@ -93,7 +93,7 @@ public class Renderer {
 
 	public void renderBackground(){
 
-		double worldTopOfBackground = 10000;
+		double worldTop = 5000;
 		
 		// find dest Rectangle
 		Rectangle dest = new Rectangle(converter.getScreen());
@@ -102,7 +102,7 @@ public class Renderer {
 		Rectangle src = new Rectangle();
 		src.setWidth(backgroundImage.getWidth());
 		src.setHeight(converter.getScreen().height() * backgroundImage.getWidth() / converter.getScreen().width());
-		src.setY(backgroundImage.getHeight() - src.height() - (worldTopOfBackground - converter.getWorldViewport().minY()) / worldTopOfBackground);
+		src.setY(backgroundImage.getHeight() - src.height() - converter.getWorldViewport().minY() * (backgroundImage.getHeight() - src.height()) / (worldTop - converter.getWorldViewport().height()));
 		
 		// draw
 		draw(backgroundImage, src, dest);
@@ -160,10 +160,31 @@ public class Renderer {
 	
 	public void render(Platform platform){
 		Rectangle r = converter.worldRectToScreenRect(platform.rect());
+		double imageWidth = platformImage.getWidth();
 		
-		draw(platformImage, new Rectangle(0, 0, Math.min(r.width(), 400), r.height()), r);
-//		gc.setFill(Color.BROWN);
-//		gc.fillRect(r.minX(), r.minY(), r.width(), r.height());
+		if(r.width() < imageWidth){
+			draw( platformImage, new Rectangle(0, 0, r.width() - 50, r.height()), new Rectangle(r.minX(), r.minY(), r.width() - 50, r.height()) );
+			draw( platformImage, new Rectangle(imageWidth - 50, 0, 50, r.height()), new Rectangle(r.maxX() - 50, r.minY(), 50, r.height()) );
+		}
+		else if(r.width() > imageWidth){
+			// draw the first 50 pixels
+			draw( platformImage, new Rectangle(0, 0, 50, r.height()), new Rectangle(r.minX(), r.minY(), 50, r.height()) );
+			
+			// repeatedly draw the middle (300) pixels until there is less than 350 pixels to draw
+			double x = r.minX() + 50;
+			while(x < r.maxX() - imageWidth + 50){
+				draw( platformImage, new Rectangle(50, 0, imageWidth - 100, r.height()), new Rectangle(x, r.minY(), imageWidth - 100, r.height()) );
+				x += (400 - 100);
+			}
+			
+			// draw middle pixels until there is less than 50 pixels left to draw
+			draw( platformImage, new Rectangle(50, 0, r.maxX() - 50 - x, r.height()), new Rectangle(x, r.minY(), r.maxX() - 50 - x, r.height()) );
+
+			// draw the last 50 pixels
+			draw( platformImage, new Rectangle(imageWidth - 50, 0, 50, r.height()), new Rectangle(r.maxX() - 50, r.minY(), 50, r.height()) );
+		}
+		else
+			draw(platformImage, new Rectangle(0, 0, imageWidth, r.height()), r);
 	}
 	
 	public void render(Lava lava){

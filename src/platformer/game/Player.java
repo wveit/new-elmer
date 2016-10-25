@@ -19,7 +19,9 @@ public class Player{
 		privateReset();
 	}
 	
-	public boolean isDead(){ return isDead; }
+	public boolean isDead(){ 
+		return isDead; 
+	}
 	
 
 	
