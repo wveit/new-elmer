@@ -5,7 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
-public class App extends Application{
+public class PlatformerApp extends Application{
 	GameScreen gameScreen = new GameScreen(1200, 800);
 	
 	@Override

@@ -83,21 +83,27 @@ public class LevelScreen extends MyScreen{
 		// adjust which type of entity will be created when mouse is dragged
 		if(e.getCode() == KeyCode.DIGIT0){
 			entityCode = 0;
+			System.out.println("Add Player");
 		}
 		else if(e.getCode() == KeyCode.DIGIT1){
 			entityCode = 1;
+			System.out.println("Add Platform");
 		}
 		else if(e.getCode() == KeyCode.DIGIT2){
 			entityCode = 2;
+			System.out.println("Add LavaMonster");
 		}
 		else if(e.getCode() == KeyCode.DIGIT3){
 			entityCode = 3;
+			System.out.println("Add Spikey");
 		}
 		else if(e.getCode() == KeyCode.DIGIT4){
 			entityCode = 4;
+			System.out.println("Add Vulcor");
 		}
 		else if(e.getCode() == KeyCode.DIGIT5){
 			entityCode = 5;
+			System.out.println("Add Goal");
 		}
 		
 		// change which part of the game world is displayed in window

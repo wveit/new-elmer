@@ -20,6 +20,7 @@ public class Renderer {
 	private Image backgroundImage;
 	private Image platformImage;
 	private Image gameOverImage;
+	private Image eagleImage;
 	
 	private SpriteAnimator ninjaAnimator;
 	private SpriteAnimator lavaMonsterAnimator;
@@ -49,6 +50,7 @@ public class Renderer {
 			backgroundImage = new Image(new File("assets/platformer/volcano_background.png").toURI().toURL().toString());
 			platformImage = new Image(new File("assets/platformer/platform.png").toURI().toURL().toString());
 			gameOverImage = new Image(new File("assets/platformer/gameover.png").toURI().toURL().toString());
+			eagleImage = new Image(new File("assets/platformer/eagle.png").toURI().toURL().toString());
 		
 		} 
 		catch(Exception e){
@@ -218,6 +220,11 @@ public class Renderer {
 				img, 
 				srcRect.minX(),  srcRect.minY(), srcRect.width(), srcRect.height(),
 				destRect.minX(), destRect.minY(), destRect.width(), destRect.height());
+	}
+	
+	public void render(Eagle eagle){
+		Rectangle r = converter.worldRectToScreenRect(eagle.rect());
+		gc.drawImage(eagleImage, r.minX(), r.minY(), r.width(), r.height());
 	}
 
 }

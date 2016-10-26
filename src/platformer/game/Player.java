@@ -13,6 +13,7 @@ public class Player{
 	private double jumpSpeed = 1000;
 	private boolean isOnPlatform = false;
 	private boolean isDead;
+	private boolean onGoal;
 	
 	public Player(double x, double y, double width, double height){
 		rect = new Rectangle(x, y, width, height);
@@ -24,7 +25,9 @@ public class Player{
 	}
 	
 
-	
+	public boolean onGoal(){
+		return onGoal;
+	}
 
 
 	
@@ -91,7 +94,12 @@ public class Player{
 			}
 		}
 		
-
+		if(rect.overlaps(world.goal.rect())){
+			onGoal = true;
+		}
+		else{
+			onGoal = false;
+		}
 		
 	}
 	
@@ -114,7 +122,7 @@ public class Player{
 	
 	private void privateReset(){
 		vX = vY = 0;
-		requestLeft = requestRight = requestJump = isDead = false;
+		requestLeft = requestRight = requestJump = isDead = onGoal = false;
 	}
 	
 	public double vX(){ return vX; }
