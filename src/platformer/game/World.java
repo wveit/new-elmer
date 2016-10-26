@@ -13,6 +13,7 @@ public class World {
 	public double gravity = 0;
 	
 	public Player player = null;
+	public Goal goal = null;
 	public Rectangle leftBoundary = null;
 	public Rectangle rightBoundary = null;
 	public ArrayList<Platform> platformList = new ArrayList<>();
@@ -22,6 +23,7 @@ public class World {
 	}
 	
 	private void clear(){
+		goal = null;
 		player = null;
 		leftBoundary = null;
 		leftBoundary = null;
@@ -44,6 +46,9 @@ public class World {
 		
 		Rectangle r = player.rect();
 		pw.println("player " + r.minX() + " " + r.minY() + " " + r.width() + " " + r.height() + " ;");
+		
+		r = goal.rect();
+		pw.println("goal " + r.minX() + " " + r.minY() + " " + r.width() + " " + r.height() + " ;");
 		
 		r = leftBoundary;
 		pw.println("leftBoundary " + r.minX() + " " + r.minY() + " " + r.width() + " " + r.height() + " ;");
@@ -109,6 +114,8 @@ public class World {
 		
 		if(tokenList.get(0).equals("player"))
 			player = new Player(Double.parseDouble(tokenList.get(1)), Double.parseDouble(tokenList.get(2)), Double.parseDouble(tokenList.get(3)), Double.parseDouble(tokenList.get(4)));
+		else if(tokenList.get(0).equals("goal"))
+			goal = new Goal(Double.parseDouble(tokenList.get(1)), Double.parseDouble(tokenList.get(2)), Double.parseDouble(tokenList.get(3)), Double.parseDouble(tokenList.get(4)));
 		else if(tokenList.get(0).equals("spikey"))
 			enemyList.add(new Spikey(Double.parseDouble(tokenList.get(1)), Double.parseDouble(tokenList.get(2)), Double.parseDouble(tokenList.get(3)), Double.parseDouble(tokenList.get(4))));
 		else if(tokenList.get(0).equals("lavaMonster"))

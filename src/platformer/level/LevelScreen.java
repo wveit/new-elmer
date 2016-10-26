@@ -15,7 +15,7 @@ import platformer.game.*;
 public class LevelScreen extends MyScreen{
 
 	private World world = new World();
-	private int entityCode = 0; // 0-player, 1-platform, 2-lavaMonster
+	private int entityCode = 0; // 0-player, 1-platform, 2-lavaMonster, 3-Spikey, 4-Vulcor, 5-Goal
 	private boolean leftMouseDown = false;
 	private Rectangle screenDragRect = new Rectangle();
 	private ScreenWorldRectConverter rectConverter = null;
@@ -25,7 +25,7 @@ public class LevelScreen extends MyScreen{
 	public LevelScreen(int width, int height) {
 		super(width, height);
 		rectConverter = new ScreenWorldRectConverter(new Rectangle(0, 0, width, height), new Rectangle(0, 0, width, height));
-		world.leftBoundary = new Rectangle(); world.rightBoundary = new Rectangle(); world.gravity = -1000;
+		world.leftBoundary = new Rectangle(); world.rightBoundary = new Rectangle(); world.gravity = -1000; world.goal = new Goal(0,0,0,0); world.player = new Player(0,0,0,0);
 		renderer = new Renderer(this.getGraphicsContext2D(), rectConverter);
 		this.start();
 		
@@ -46,6 +46,8 @@ public class LevelScreen extends MyScreen{
 			world.enemyList.add(new Spikey(r.minX(), r.minY(), r.width(), r.height()));
 		else if(entityCode == 4)
 			world.enemyList.add(new Vulcor(r.minX(), r.minY(), r.width(), r.height()));
+		else if(entityCode == 5)
+			world.goal = new Goal(r.minX(), r.minY(), r.width(), r.height());
 	}
 	
 	@Override
@@ -79,16 +81,24 @@ public class LevelScreen extends MyScreen{
 	@Override
 	public void keyPressed(KeyEvent e){
 		// adjust which type of entity will be created when mouse is dragged
-		if(e.getCode() == KeyCode.DIGIT0)
+		if(e.getCode() == KeyCode.DIGIT0){
 			entityCode = 0;
-		else if(e.getCode() == KeyCode.DIGIT1)
+		}
+		else if(e.getCode() == KeyCode.DIGIT1){
 			entityCode = 1;
-		else if(e.getCode() == KeyCode.DIGIT2)
+		}
+		else if(e.getCode() == KeyCode.DIGIT2){
 			entityCode = 2;
-		else if(e.getCode() == KeyCode.DIGIT3)
-				entityCode = 3;
-		else if(e.getCode() == KeyCode.DIGIT4)
+		}
+		else if(e.getCode() == KeyCode.DIGIT3){
+			entityCode = 3;
+		}
+		else if(e.getCode() == KeyCode.DIGIT4){
 			entityCode = 4;
+		}
+		else if(e.getCode() == KeyCode.DIGIT5){
+			entityCode = 5;
+		}
 		
 		// change which part of the game world is displayed in window
 		else if(e.getCode() == KeyCode.LEFT)

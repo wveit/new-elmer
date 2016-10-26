@@ -84,6 +84,10 @@ public class Renderer {
 		if(lava != null)
 			render(lava);
 		
+		// Draw Goal
+		if(world.goal != null)
+			render(world.goal);
+		
 		// Draw Player
 		if(world.player != null)
 			render(world.player);
@@ -156,6 +160,17 @@ public class Renderer {
 		}
 		
 		ninjaAnimator.draw(gc, r);
+	}
+	
+	public void render(Goal goal){
+		Rectangle r = converter.worldRectToScreenRect(goal.rect());
+		gc.setFill(Color.YELLOWGREEN);
+		gc.fillRect(r.minX(), r.minY(), r.width(), r.height());
+		gc.setStroke(Color.BLUE);
+		gc.setLineWidth(5);
+		gc.strokeRect(r.minX(), r.minY(), r.width(), r.height());
+		gc.setFill(Color.BLACK);
+		gc.fillText("GOAL", r.minX() + 5, r.minY() + 20);
 	}
 	
 	public void render(Platform platform){

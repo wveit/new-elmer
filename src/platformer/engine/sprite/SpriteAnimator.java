@@ -3,6 +3,7 @@ package platformer.engine.sprite;
 import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 import platformer.engine.shape.Rectangle;
 
 
@@ -87,8 +88,11 @@ public class SpriteAnimator {
 		}
 		Rectangle srcRect = rectMatrix.get(modeNum).get(rectNum);
 		
-		if(showBox)
+		if(showBox){
+			gc.setLineWidth(1);
+			gc.setStroke(Color.BLACK);
 			gc.strokeRect(destRect.minX(), destRect.minY(), destRect.width(), destRect.height());
+		}
 		
 		if(!flippedHorizontal && !flippedVertical){
 			gc.drawImage(img, srcRect.minX(), srcRect.minY(), srcRect.width(), srcRect.height(), destRect.minX(), destRect.minY(), destRect.width(), destRect.height());
