@@ -20,6 +20,7 @@ public class Renderer {
 	private Image backgroundImage;
 	private Image platformImage;
 	private Image gameOverImage;
+	private Image eagleImage;
 	
 	private SpriteAnimator ninjaAnimator;
 	private SpriteAnimator lavaMonsterAnimator;
@@ -49,6 +50,7 @@ public class Renderer {
 			backgroundImage = new Image(new File("assets/platformer/volcano_background.png").toURI().toURL().toString());
 			platformImage = new Image(new File("assets/platformer/platform.png").toURI().toURL().toString());
 			gameOverImage = new Image(new File("assets/platformer/gameover.png").toURI().toURL().toString());
+			eagleImage = new Image(new File("assets/platformer/eagle.png").toURI().toURL().toString());
 		
 		} 
 		catch(Exception e){
@@ -84,6 +86,10 @@ public class Renderer {
 		if(lava != null)
 			render(lava);
 		
+		// Draw Goal
+		if(world.goal != null)
+			render(world.goal);
+		
 		// Draw Player
 		if(world.player != null)
 			render(world.player);
@@ -93,7 +99,7 @@ public class Renderer {
 
 	public void renderBackground(){
 
-		double worldTopOfBackground = 10000;
+		double worldTop = 5000;
 		
 		// find dest Rectangle
 		Rectangle dest = new Rectangle(converter.getScreen());
@@ -102,7 +108,7 @@ public class Renderer {
 		Rectangle src = new Rectangle();
 		src.setWidth(backgroundImage.getWidth());
 		src.setHeight(converter.getScreen().height() * backgroundImage.getWidth() / converter.getScreen().width());
-		src.setY(backgroundImage.getHeight() - src.height() - (worldTopOfBackground - converter.getWorldViewport().minY()) / worldTopOfBackground);
+		src.setY(backgroundImage.getHeight() - src.height() - converter.getWorldViewport().minY() * (backgroundImage.getHeight() - src.height()) / (worldTop - converter.getWorldViewport().height()));
 		
 		// draw
 		draw(backgroundImage, src, dest);
@@ -158,12 +164,44 @@ public class Renderer {
 		ninjaAnimator.draw(gc, r);
 	}
 	
+	public void render(Goal goal){
+		Rectangle r = converter.worldRectToScreenRect(goal.rect());
+		gc.setFill(Color.YELLOWGREEN);
+		gc.fillRect(r.minX(), r.minY(), r.width(), r.height());
+		gc.setStroke(Color.BLUE);
+		gc.setLineWidth(5);
+		gc.strokeRect(r.minX(), r.minY(), r.width(), r.height());
+		gc.setFill(Color.BLACK);
+		gc.fillText("GOAL", r.minX() + 5, r.minY() + 20);
+	}
+	
 	public void render(Platform platform){
 		Rectangle r = converter.worldRectToScreenRect(platform.rect());
+		double imageWidth = platformImage.getWidth();
 		
-		draw(platformImage, new Rectangle(0, 0, Math.min(r.width(), 400), r.height()), r);
-//		gc.setFill(Color.BROWN);
-//		gc.fillRect(r.minX(), r.minY(), r.width(), r.height());
+		if(r.width() < imageWidth){
+			draw( platformImage, new Rectangle(0, 0, r.width() - 50, r.height()), new Rectangle(r.minX(), r.minY(), r.width() - 50, r.height()) );
+			draw( platformImage, new Rectangle(imageWidth - 50, 0, 50, r.height()), new Rectangle(r.maxX() - 50, r.minY(), 50, r.height()) );
+		}
+		else if(r.width() > imageWidth){
+			// draw the first 50 pixels
+			draw( platformImage, new Rectangle(0, 0, 50, r.height()), new Rectangle(r.minX(), r.minY(), 50, r.height()) );
+			
+			// repeatedly draw the middle (300) pixels until there is less than 350 pixels to draw
+			double x = r.minX() + 50;
+			while(x < r.maxX() - imageWidth + 50){
+				draw( platformImage, new Rectangle(50, 0, imageWidth - 100, r.height()), new Rectangle(x, r.minY(), imageWidth - 100, r.height()) );
+				x += (400 - 100);
+			}
+			
+			// draw middle pixels until there is less than 50 pixels left to draw
+			draw( platformImage, new Rectangle(50, 0, r.maxX() - 50 - x, r.height()), new Rectangle(x, r.minY(), r.maxX() - 50 - x, r.height()) );
+
+			// draw the last 50 pixels
+			draw( platformImage, new Rectangle(imageWidth - 50, 0, 50, r.height()), new Rectangle(r.maxX() - 50, r.minY(), 50, r.height()) );
+		}
+		else
+			draw(platformImage, new Rectangle(0, 0, imageWidth, r.height()), r);
 	}
 	
 	public void render(Lava lava){
@@ -182,6 +220,11 @@ public class Renderer {
 				img, 
 				srcRect.minX(),  srcRect.minY(), srcRect.width(), srcRect.height(),
 				destRect.minX(), destRect.minY(), destRect.width(), destRect.height());
+	}
+	
+	public void render(Eagle eagle){
+		Rectangle r = converter.worldRectToScreenRect(eagle.rect());
+		gc.drawImage(eagleImage, r.minX(), r.minY(), r.width(), r.height());
 	}
 
 }
