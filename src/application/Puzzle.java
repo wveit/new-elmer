@@ -1,6 +1,8 @@
 package application;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -8,15 +10,20 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import jc.Logic;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 
 public class Puzzle implements OpMode{
 
 	Control control = null;
-	
 	Pane pane = new Pane();
+	
 	private GraphicsContext gc;
 	
 	//  image positions
@@ -45,8 +52,12 @@ public class Puzzle implements OpMode{
 	
 	//  choose the level of difficulty
 	//  default level is easy
-	private boolean easyComputer = true;
-	private boolean hardComputer = false;
+	private boolean easy = false;
+	private boolean medium = true;
+	private boolean hard = false;
+	
+	//   check if game is being played in story mode
+	private boolean story = false;
 	
 	private Button button1 = new Button("Select");
 	private Button button2 = new Button("Select");
@@ -63,15 +74,20 @@ public class Puzzle implements OpMode{
 	
 	private Image ninja;
 	private Image wizard;
+	private Image backgroundImage;
+	
+	private MediaPlayer mediaPlayer;
 
 	public Puzzle() {
 		
 		try{
 			ninja = new Image(new File("assets/puzzle/ninja.png").toURI().toURL().toString());
 			wizard = new Image(new File("assets/puzzle/wizard.jpeg").toURI().toURL().toString());
+			backgroundImage = new Image(new File("assets/platformer/volcano_background.png").toURI().toURL().toString());
 		}catch(Exception e){
 			System.out.println("Problem images.");
 		}
+		
 		
 		Canvas canvas = new Canvas(1200,800);
 		pane.getChildren().add(canvas);
@@ -113,7 +129,9 @@ public class Puzzle implements OpMode{
 				button1.setDisable(true);
 				checkWin();
 				
-				easyComputerMove();
+				playButtonSound();
+				
+				computerMove();
 			}
 
 		}
@@ -131,7 +149,9 @@ public class Puzzle implements OpMode{
 				button2.setDisable(true);
 				checkWin();
 				
-				easyComputerMove();
+				playButtonSound();
+				
+				computerMove();
 			}
 
 		}
@@ -149,7 +169,9 @@ public class Puzzle implements OpMode{
 				button3.setDisable(true);
 				checkWin();
 				
-				easyComputerMove();
+				playButtonSound();
+				
+				computerMove();
 
 			}
 			
@@ -169,7 +191,9 @@ public class Puzzle implements OpMode{
 				button4.setDisable(true);
 				checkWin();
 				
-				easyComputerMove();	
+				playButtonSound();
+
+				computerMove();	
 			}
 	
 		}
@@ -187,8 +211,10 @@ public class Puzzle implements OpMode{
 				logic.playerMove(1, 1);
 				button5.setDisable(true);
 				checkWin();
-				
-				easyComputerMove();
+
+				playButtonSound();
+
+				computerMove();
 			}
 	
 		}
@@ -207,7 +233,9 @@ public class Puzzle implements OpMode{
 				button6.setDisable(true);
 				checkWin();
 				
-				easyComputerMove();
+				playButtonSound();
+
+				computerMove();
 			}
 	
 		}
@@ -226,7 +254,9 @@ public class Puzzle implements OpMode{
 				button7.setDisable(true);
 				checkWin();
 				
-				easyComputerMove();	
+				playButtonSound();
+
+				computerMove();	
 			}
 	
 		}
@@ -245,7 +275,9 @@ public class Puzzle implements OpMode{
 				button8.setDisable(true);
 				checkWin();
 				
-				easyComputerMove();
+				playButtonSound();
+
+				computerMove();
 			}
 	
 		}
@@ -264,7 +296,9 @@ public class Puzzle implements OpMode{
 				button9.setDisable(true);
 				checkWin();
 				
-				easyComputerMove();
+				playButtonSound();
+
+				computerMove();
 			}
 	
 		}
@@ -274,11 +308,12 @@ public class Puzzle implements OpMode{
 		quitButton.setLayoutY(heightSpacing/3);
 		
 		quitButton.setOnAction(e -> {
-			control.notifyOfOpModeCompletion(this, 0);
+			control.startMainMenu(null);
 		}
 				);
 		
 		pane.getChildren().addAll(button1, button2, button3, button4, button5, button6, button7, button8, button9, quitButton);
+
 
 	}
 	
@@ -366,46 +401,308 @@ public class Puzzle implements OpMode{
 		
 	}
 	
-	private void easyComputerMove(){
+private void computerMove(){
 		
-		if(playable == true && button1.isDisabled() == false){
-			clickButtonOne();
-			return;
+		if(easy == true){
+			if(playable == true && button1.isDisabled() == false){
+				clickButtonOne();
+				return;
+			}
+			if(playable == true && button2.isDisabled() == false){
+				clickButtonTwo();
+				return;
+			}
+			if(playable == true && button3.isDisabled() == false){
+				clickButtonThree();
+				return;
+			}
+			if(playable == true && button4.isDisabled() == false){
+				clickButtonFour();
+				return;
+			}
+			if(playable == true && button5.isDisabled() == false){
+				clickButtonFive();
+				return;
+			}
+			if(playable == true && button6.isDisabled() == false){
+				clickButtonSix();
+				return;
+			}
+			if(playable == true && button7.isDisabled() == false){
+				clickButtonSeven();
+				return;
+			}
+			if(playable == true && button8.isDisabled() == false){
+				clickButtonEight();
+				return;
+			}
+			if(playable == true && button9.isDisabled() == false){
+				clickButtonNine();
+				return;
+			}
 		}
-		if(playable == true && button2.isDisabled() == false){
-			clickButtonTwo();
-			return;
-		}
-		if(playable == true && button3.isDisabled() == false){
-			clickButtonThree();
-			return;
-		}
-		if(playable == true && button4.isDisabled() == false){
-			clickButtonFour();
-			return;
-		}
-		if(playable == true && button5.isDisabled() == false){
-			clickButtonFive();
-			return;
-		}
-		if(playable == true && button6.isDisabled() == false){
-			clickButtonSix();
-			return;
-		}
-		if(playable == true && button7.isDisabled() == false){
-			clickButtonSeven();
-			return;
-		}
-		if(playable == true && button8.isDisabled() == false){
-			clickButtonEight();
-			return;
-		}
-		if(playable == true && button9.isDisabled() == false){
-			clickButtonNine();
-			return;
+		
+		if(medium == true){
+			
+			if((playable == true && logic.gameboard[0][1] == 'X' && logic.gameboard[0][2] == 'X') 
+					|| (playable == true && logic.gameboard[1][0] == 'X' && logic.gameboard[2][0] == 'X')
+					|| (playable == true && logic.gameboard[1][1] == 'X' && logic.gameboard[2][2] == 'X')){
+				
+				if(button1.isDisabled() == false){
+					clickButtonOne();
+					return;
+				}
+			}
+			
+			if((playable == true && logic.gameboard[0][0] == 'X' && logic.gameboard[0][2] == 'X') 
+					|| (playable == true && logic.gameboard[1][1] == 'X' && logic.gameboard[2][1] == 'X')){
+				
+				if(button2.isDisabled() == false){
+					clickButtonTwo();
+					return;
+				}
+			}
+			
+			if((playable == true && logic.gameboard[0][0] == 'X' && logic.gameboard[0][1] == 'X') 
+					|| (playable == true && logic.gameboard[1][2] == 'X' && logic.gameboard[2][2] == 'X')
+					|| (playable == true && logic.gameboard[2][0] == 'X' && logic.gameboard[1][1] == 'X')){
+				
+				if(button3.isDisabled() == false){
+					clickButtonThree();
+					return;
+				}
+			}
+			
+			if((playable == true && logic.gameboard[0][0] == 'X' && logic.gameboard[2][0] == 'X') 
+					|| (playable == true && logic.gameboard[1][1] == 'X' && logic.gameboard[1][2] == 'X')){
+				
+				if(button4.isDisabled() == false){
+					clickButtonFour();
+					return;
+				}
+			}
+			
+			if((playable == true && logic.gameboard[0][0] == 'X' && logic.gameboard[2][2] == 'X') 
+					|| (playable == true && logic.gameboard[2][0] == 'X' && logic.gameboard[0][2] == 'X')
+					|| (playable == true && logic.gameboard[0][1] == 'X' && logic.gameboard[2][1] == 'X')
+					|| (playable == true && logic.gameboard[1][0] == 'X' && logic.gameboard[1][2] == 'X')){
+				
+				if(button5.isDisabled() == false){
+					clickButtonFive();
+					return;
+				}
+			}
+			
+			if((playable == true && logic.gameboard[1][0] == 'X' && logic.gameboard[1][1] == 'X') 
+					|| (playable == true && logic.gameboard[0][2] == 'X' && logic.gameboard[2][2] == 'X')){
+				
+				if(button6.isDisabled() == false){
+					clickButtonSix();
+					return;
+				}
+			}
+			
+			if((playable == true && logic.gameboard[2][1] == 'X' && logic.gameboard[2][2] == 'X') 
+					|| (playable == true && logic.gameboard[0][0] == 'X' && logic.gameboard[1][0] == 'X')
+					|| (playable == true && logic.gameboard[1][1] == 'X' && logic.gameboard[0][2] == 'X')){
+				
+				if(button7.isDisabled() == false){
+					clickButtonSeven();
+					return;
+				}
+			}
+			
+			if((playable == true && logic.gameboard[2][0] == 'X' && logic.gameboard[2][2] == 'X') 
+					|| (playable == true && logic.gameboard[0][1] == 'X' && logic.gameboard[1][1] == 'X')){
+				
+				if(button8.isDisabled() == false){
+					clickButtonEight();
+					return;
+				}
+			}
+			
+			if((playable == true && logic.gameboard[2][0] == 'X' && logic.gameboard[2][1] == 'X') 
+					|| (playable == true && logic.gameboard[0][2] == 'X' && logic.gameboard[1][2] == 'X')
+					|| (playable == true && logic.gameboard[2][0] == 'X' && logic.gameboard[2][1] == 'X')){
+				
+				if(button9.isDisabled() == false){
+					clickButtonNine();
+					return;
+				}
+			}
+			
+
+			if(playable == true && button1.isDisabled() == false){
+				clickButtonOne();
+				return;
+			}
+			if(playable == true && button2.isDisabled() == false){
+				clickButtonTwo();
+				return;
+			}
+			if(playable == true && button3.isDisabled() == false){
+				clickButtonThree();
+				return;
+			}
+			if(playable == true && button4.isDisabled() == false){
+				clickButtonFour();
+				return;
+			}
+			if(playable == true && button5.isDisabled() == false){
+				clickButtonFive();
+				return;
+			}
+			if(playable == true && button6.isDisabled() == false){
+				clickButtonSix();
+				return;
+			}
+			if(playable == true && button7.isDisabled() == false){
+				clickButtonSeven();
+				return;
+			}
+			if(playable == true && button8.isDisabled() == false){
+				clickButtonEight();
+				return;
+			}
+			if(playable == true && button9.isDisabled() == false){
+				clickButtonNine();
+				return;
+			}
+			
+
+		}	
+		
+		if(hard == true){
+			
+			if((playable == true && logic.gameboard[0][1] == 'X' && logic.gameboard[0][2] == 'X') 
+					|| (playable == true && logic.gameboard[1][0] == 'X' && logic.gameboard[2][0] == 'X')
+					|| (playable == true && logic.gameboard[1][1] == 'X' && logic.gameboard[2][2] == 'X')){
+				
+				if(button1.isDisabled() == false){
+					clickButtonOne();
+					return;
+				}
+			}
+			
+			if((playable == true && logic.gameboard[0][0] == 'X' && logic.gameboard[0][2] == 'X') 
+					|| (playable == true && logic.gameboard[1][1] == 'X' && logic.gameboard[2][1] == 'X')){
+				
+				if(button2.isDisabled() == false){
+					clickButtonTwo();
+					return;
+				}
+			}
+			
+			if((playable == true && logic.gameboard[0][0] == 'X' && logic.gameboard[0][1] == 'X') 
+					|| (playable == true && logic.gameboard[1][2] == 'X' && logic.gameboard[2][2] == 'X')
+					|| (playable == true && logic.gameboard[2][0] == 'X' && logic.gameboard[1][1] == 'X')){
+				
+				if(button3.isDisabled() == false){
+					clickButtonThree();
+					return;
+				}
+			}
+			
+			if((playable == true && logic.gameboard[0][0] == 'X' && logic.gameboard[2][0] == 'X') 
+					|| (playable == true && logic.gameboard[1][1] == 'X' && logic.gameboard[1][2] == 'X')){
+				
+				if(button4.isDisabled() == false){
+					clickButtonFour();
+					return;
+				}
+			}
+			
+			if((playable == true && logic.gameboard[0][0] == 'X' && logic.gameboard[2][2] == 'X') 
+					|| (playable == true && logic.gameboard[2][0] == 'X' && logic.gameboard[0][2] == 'X')
+					|| (playable == true && logic.gameboard[0][1] == 'X' && logic.gameboard[2][1] == 'X')
+					|| (playable == true && logic.gameboard[1][0] == 'X' && logic.gameboard[1][2] == 'X')){
+				
+				if(button5.isDisabled() == false){
+					clickButtonFive();
+					return;
+				}
+			}
+			
+			if((playable == true && logic.gameboard[1][0] == 'X' && logic.gameboard[1][1] == 'X') 
+					|| (playable == true && logic.gameboard[0][2] == 'X' && logic.gameboard[2][2] == 'X')){
+				
+				if(button6.isDisabled() == false){
+					clickButtonSix();
+					return;
+				}
+			}
+			
+			if((playable == true && logic.gameboard[2][1] == 'X' && logic.gameboard[2][2] == 'X') 
+					|| (playable == true && logic.gameboard[0][0] == 'X' && logic.gameboard[1][0] == 'X')
+					|| (playable == true && logic.gameboard[1][1] == 'X' && logic.gameboard[0][2] == 'X')){
+				
+				if(button7.isDisabled() == false){
+					clickButtonSeven();
+					return;
+				}
+			}
+			
+			if((playable == true && logic.gameboard[2][0] == 'X' && logic.gameboard[2][2] == 'X') 
+					|| (playable == true && logic.gameboard[0][1] == 'X' && logic.gameboard[1][1] == 'X')){
+				
+				if(button8.isDisabled() == false){
+					clickButtonEight();
+					return;
+				}
+			}
+			
+			if((playable == true && logic.gameboard[2][0] == 'X' && logic.gameboard[2][1] == 'X') 
+					|| (playable == true && logic.gameboard[0][2] == 'X' && logic.gameboard[1][2] == 'X')
+					|| (playable == true && logic.gameboard[2][0] == 'X' && logic.gameboard[2][1] == 'X')){
+				
+				if(button9.isDisabled() == false){
+					clickButtonNine();
+					return;
+				}
+			}
+			
+			if(playable == true && button5.isDisabled() == false){
+				clickButtonFive();
+				return;
+			}
+			if(playable == true && button1.isDisabled() == false){
+				clickButtonOne();
+				return;
+			}
+			if(playable == true && button2.isDisabled() == false){
+				clickButtonTwo();
+				return;
+			}
+			if(playable == true && button3.isDisabled() == false){
+				clickButtonThree();
+				return;
+			}
+			if(playable == true && button4.isDisabled() == false){
+				clickButtonFour();
+				return;
+			}
+			if(playable == true && button6.isDisabled() == false){
+				clickButtonSix();
+				return;
+			}
+			if(playable == true && button7.isDisabled() == false){
+				clickButtonSeven();
+				return;
+			}
+			if(playable == true && button8.isDisabled() == false){
+				clickButtonEight();
+				return;
+			}
+			if(playable == true && button9.isDisabled() == false){
+				clickButtonNine();
+				return;
+			}
+			
+
 		}
 		
 	}
+	
 	
 	private void checkWin(){
 		
@@ -467,96 +764,189 @@ public class Puzzle implements OpMode{
 		}
 		
 	}
-	
 
 	
 	private void winOptions(){
 		
-		pane.getChildren().removeAll(button1, button2, button3, button4, button5, button6, button7, button8, button9, quitButton);
-		gc.clearRect(0, 0, screenWidth, screenHeight);
-		gc.fillText("You Win!\n\nPress \"Quit Game\" to return to the main menu.\nPress \"Play Again\" to play another round against the wizard.", widthSpacing, heightSpacing/2, boardWidth);
-		playable = false;
-		
-		quitButton.setLayoutX(widthSpacing);
-		quitButton.setLayoutY(heightSpacing + 15);
-		
-		quitButton.setOnAction(e -> {
-			control.notifyOfOpModeCompletion(this, 1);
+		if(story == true){
+			pane.getChildren().removeAll(quitButton);
+			gc.fillText("You Win!\n\nPress \"Quit Game\" to return to the main menu.\nPress \"Play Again\" to play another round against the wizard.", widthSpacing, heightSpacing/3, boardWidth);
+			playable = false;
+			
+			Button quitButton = new Button("Quit Game");
+			Button playAgainButton = new Button("Play Again");
+			
+			quitButton.setLayoutX(widthSpacing + boardWidth/3);
+			quitButton.setLayoutY(heightSpacing/3);
+			
+			quitButton.setOnAction(e -> {
+				control.startMainMenu(null);
+			}
+					);
+			
+			playAgainButton.setLayoutX(widthSpacing + 2*boardWidth/3);
+			playAgainButton.setLayoutY(heightSpacing/3);
+			
+			playAgainButton.setOnAction(e -> {
+				control.startPuzzle("puzzle_level");
+			}
+					);
+			
+			pane.getChildren().addAll(quitButton, playAgainButton);
+		}else{
+			pane.getChildren().removeAll(quitButton);
+			gc.fillText("You Win!\n\nPress \"Quit Game\" to return to the main menu.\nPress \"Play Again\" to play another round against the wizard.", widthSpacing, heightSpacing/3, boardWidth);
+			playable = false;
+			
+			Button quitButton = new Button("Quit Game");
+			Button playAgainButton = new Button("Play Again");
+			
+			quitButton.setLayoutX(widthSpacing + boardWidth/3);
+			quitButton.setLayoutY(heightSpacing/3);
+			
+			quitButton.setOnAction(e -> {
+				control.startMainMenu(null);
+			}
+					);
+			
+			playAgainButton.setLayoutX(widthSpacing + 2*boardWidth/3);
+			playAgainButton.setLayoutY(heightSpacing/3);
+			
+			playAgainButton.setOnAction(e -> {
+				control.startPuzzle("puzzle_level");
+			}
+					);
+			
+			pane.getChildren().addAll(quitButton, playAgainButton);
 		}
-				);
-		
-		playAgainButton.setLayoutX(widthSpacing + boardWidth/3);
-		playAgainButton.setLayoutY(heightSpacing + 15);
-		
-		playAgainButton.setOnAction(e -> {
-			control.startPuzzle("puzzle_level");
-		}
-				);
-		
-		pane.getChildren().addAll(quitButton, playAgainButton);
 		
 	}
 	
 	private void lossOptions(){
 		
-		pane.getChildren().removeAll(button1, button2, button3, button4, button5, button6, button7, button8, button9, quitButton);
-		gc.clearRect(0, 0, screenWidth, screenHeight);
-		gc.fillText("You Lose!\n\nPress \"Quit Game\" to return to the main menu.\nPress \"Play Again\" to play another round against the wizard.", widthSpacing, heightSpacing/2, boardWidth);
-		playable = false;
-		
-		Button quitButton = new Button("Quit Game");
-		Button playAgainButton = new Button("Play Again");
-		
-		quitButton.setLayoutX(widthSpacing);
-		quitButton.setLayoutY(heightSpacing + 15);
-		
-		quitButton.setOnAction(e -> {
-			control.notifyOfOpModeCompletion(this, 0);
+		if(story == true){
+			pane.getChildren().removeAll(quitButton);
+			gc.fillText("You Lose!\n\nPress \"Quit Game\" to return to the main menu.\nPress \"Play Again\" to play another round against the wizard.", widthSpacing, heightSpacing/3, boardWidth);
+			playable = false;
+			
+			Button quitButton = new Button("Quit Game");
+			Button playAgainButton = new Button("Play Again");
+			
+			quitButton.setLayoutX(widthSpacing + boardWidth/3);
+			quitButton.setLayoutY(heightSpacing/3);
+			
+			quitButton.setOnAction(e -> {
+				control.startMainMenu(null);
+			}
+					);
+			
+			playAgainButton.setLayoutX(widthSpacing + 2*boardWidth/3);
+			playAgainButton.setLayoutY(heightSpacing/3);
+			
+			playAgainButton.setOnAction(e -> {
+				control.startPuzzle("puzzle_level");
+			}
+					);
+			
+			pane.getChildren().addAll(quitButton, playAgainButton);
+		}else{
+			pane.getChildren().removeAll(quitButton);
+			gc.fillText("You Lose!\n\nPress \"Quit Game\" to return to the main menu.\nPress \"Play Again\" to play another round against the wizard.", widthSpacing, heightSpacing/3, boardWidth);
+			playable = false;
+			
+			Button quitButton = new Button("Quit Game");
+			Button playAgainButton = new Button("Play Again");
+			
+			quitButton.setLayoutX(widthSpacing + boardWidth/3);
+			quitButton.setLayoutY(heightSpacing/3);
+			
+			quitButton.setOnAction(e -> {
+				control.startMainMenu(null);
+			}
+					);
+			
+			playAgainButton.setLayoutX(widthSpacing + 2*boardWidth/3);
+			playAgainButton.setLayoutY(heightSpacing/3);
+			
+			playAgainButton.setOnAction(e -> {
+				control.startPuzzle("puzzle_level");
+			}
+					);
+			
+			pane.getChildren().addAll(quitButton, playAgainButton);
 		}
-				);
-		
-		playAgainButton.setLayoutX(widthSpacing + boardWidth/3);
-		playAgainButton.setLayoutY(heightSpacing + 15);
-		
-		playAgainButton.setOnAction(e -> {
-			control.startPuzzle("puzzle_level");
-		}
-				);
-		
-		pane.getChildren().addAll(quitButton, playAgainButton);
 
 	}
 	
 	private void drawOptions(){
 		
-		pane.getChildren().removeAll(button1, button2, button3, button4, button5, button6, button7, button8, button9, quitButton);
-		gc.clearRect(0, 0, screenWidth, screenHeight);
-		gc.fillText("The game is a draw!\n\nPress \"Quit Game\" to return to the main menu.\nPress \"Play Again\" to play another round against the wizard.", widthSpacing, heightSpacing/2, boardWidth);
-		playable = false;
+		if(story == true){
+			gc.fillText("The game is a draw...\n\nPress \"Quit Game\" to return to the main menu.\nPress \"Play Again\" to play another round against the wizard.", widthSpacing, heightSpacing/3, boardWidth);
+			playable = false;
+			
+			Button quitButton = new Button("Quit Game");
+			Button playAgainButton = new Button("Play Again");
+			
+			quitButton.setLayoutX(widthSpacing + boardWidth/3);
+			quitButton.setLayoutY(heightSpacing/3);
+			
+			quitButton.setOnAction(e -> {
+				control.startMainMenu(null);
+			}
+					);
+			
+			playAgainButton.setLayoutX(widthSpacing + 2*boardWidth/3);
+			playAgainButton.setLayoutY(heightSpacing/3);
+			
+			playAgainButton.setOnAction(e -> {
+				control.startPuzzle("puzzle_level");
+			}
+					);
+			
+			pane.getChildren().addAll(quitButton, playAgainButton);
+		}else{
 		
-		Button quitButton = new Button("Quit Game");
-		Button playAgainButton = new Button("Play Again");
-		
-		quitButton.setLayoutX(widthSpacing);
-		quitButton.setLayoutY(heightSpacing + 15);
-		
-		quitButton.setOnAction(e -> {
-			control.notifyOfOpModeCompletion(this, 0);
-		}
-				);
-		
-		playAgainButton.setLayoutX(widthSpacing + boardWidth/3);
-		playAgainButton.setLayoutY(heightSpacing + 15);
-		
-		playAgainButton.setOnAction(e -> {
-			control.startPuzzle("puzzle_level");
-		}
-				);
-		
-		pane.getChildren().addAll(quitButton, playAgainButton);
+			pane.getChildren().removeAll(quitButton);
+			gc.fillText("The game is a draw...\n\nPress \"Quit Game\" to return to the main menu.\nPress \"Play Again\" to play another round against the wizard.", widthSpacing, heightSpacing/3, boardWidth);
+			playable = false;
 
+			Button quitButton = new Button("Quit Game");
+			Button playAgainButton = new Button("Play Again");
+
+			quitButton.setLayoutX(widthSpacing + boardWidth/3);
+			quitButton.setLayoutY(heightSpacing/3);
+
+			quitButton.setOnAction(e -> {
+				control.startMainMenu(null);
+			}
+					);
+
+			playAgainButton.setLayoutX(widthSpacing + 2*boardWidth/3);
+			playAgainButton.setLayoutY(heightSpacing/3);
+
+			playAgainButton.setOnAction(e -> {
+				control.startPuzzle("puzzle_level");
+			}
+					);
+
+			pane.getChildren().addAll(quitButton, playAgainButton);
+		}
 	}
 
+	
+	private void playButtonSound(){
+		try
+		{
+			String File = "assets/puzzle/punch.wav";
+			InputStream in = new FileInputStream(File);	    
+			AudioStream audioStream = new AudioStream(in);
+			AudioPlayer.player.start(audioStream);
+		}
+		catch (Exception e)
+		{
+			System.out.println("Exception while loading audio.");
+		}
+	}
 	
 	@Override
 	public void setControl(Control control) {
