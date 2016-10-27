@@ -6,7 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 public class MainMenu implements OpMode{
-
+	
 	Pane pane = new VBox();
 	Control control = null;
 	

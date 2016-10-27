@@ -5,6 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.media.*;
+import platformer.engine.shape.Rectangle;
 import javafx.util.Duration;
 import platformer.engine.screen.MyScreen;
 
@@ -12,9 +13,15 @@ public class GameScreen extends MyScreen{
 	
 	IntListener endOfGameListener = null;
 	
+	private boolean eagleAnimation = false;
+	private Eagle eagle = new Eagle();
+	private MediaPlayer eagleMediaPlayer;
+	private double eagleTimer = 0;
+	
 	private World world;
 	private Renderer renderer;
 	private MediaPlayer mediaPlayer;
+	ScreenWorldRectConverter converter;
 	
 	private long lastNanoseconds = 0;
 	private int logicFPS = 60;
@@ -24,7 +31,8 @@ public class GameScreen extends MyScreen{
 		super(width, height);
 		
 		world = new World();
-		renderer = new Renderer(this.getGraphicsContext2D(), width, height);
+		converter = new ScreenWorldRectConverter(new Rectangle(0, 0, width, height), new Rectangle(0, 0, width, height));
+		renderer = new Renderer(this.getGraphicsContext2D(), converter);
 		
 		setUpGameMusic();
 	}
@@ -60,6 +68,7 @@ public class GameScreen extends MyScreen{
 				media = new Media("file:" + file.getAbsolutePath());
 			}catch(Exception e){
 				System.out.println("Exception while loading audio.");
+				e.printStackTrace();
 			}
 			
 			mediaPlayer = new MediaPlayer(media);
@@ -75,6 +84,28 @@ public class GameScreen extends MyScreen{
 			System.out.println("could not find audio file.");
 		}
 	}
+	
+	public void doEagleAnimation(double deltaTime){
+		double oldX = eagle.rect().minX();
+		double oldY = eagle.rect().minY();
+		
+		eagle.update(deltaTime, world);
+		
+		double deltaX = eagle.rect().minX() - oldX;
+		double deltaY = eagle.rect().minY() - oldY;
+		
+		if(eagle.hasPlayer()){
+			world.player.rect().move(deltaX, deltaY);
+		}
+		
+		renderer.render(world);
+		renderer.render(eagle);
+		
+		eagleTimer += deltaTime;
+		if(eagleTimer > 10 && endOfGameListener != null){
+			endOfGameListener.listen(1);
+		}
+	}
 
 	@Override
 	public void tick(long nanoseconds){
@@ -85,11 +116,20 @@ public class GameScreen extends MyScreen{
 		double deltaTime = (nanoseconds - lastNanoseconds) / 1000000000.0;
 		lastNanoseconds = nanoseconds;
 		
-		for(int i = 0; i < 1000; i++){
-			Math.sqrt(i);
+		if(eagleAnimation){
+			doEagleAnimation(deltaTime);
+		}		
+		else if(world.player.onGoal()){
+			eagleAnimation = true;
+			eagle.setupToGetPlayer(world.player);
+			
+			File file = new File("assets/platformer/eagle.wav");
+			Media media = new Media("file:" + file.getAbsolutePath());
+			eagleMediaPlayer = new MediaPlayer(media);
+			eagleMediaPlayer.play();
+			
 		}
-		
-		if(world.player.isDead()){
+		else if(world.player.isDead()){
 			renderer.renderGameOver();
 			
 		}
@@ -107,6 +147,7 @@ public class GameScreen extends MyScreen{
 			// Draw
 			GraphicsContext gc = this.getGraphicsContext2D();
 			gc.clearRect(0, 0, getWidth(), getHeight());
+			converter.getWorldViewport().setY(Math.max(0, world.player.rect().centerY() - converter.getWorldViewport().height() / 2));
 			renderer.render(world);
 
 		}
