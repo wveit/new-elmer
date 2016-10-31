@@ -51,12 +51,13 @@ public class StoryMode implements OpMode{
 //Start Volcano level
 		Button miniGameButton = new Button("The first path is a large thicket with almost no visibility in front of you, though you can see smoke in the distant sky.");
 		miniGameButton.setOnAction(e->{
+//			control.startDummyMiniGame("dummy_level");
 			control.startPlatformer("volcano_level");
-			
-		if(control.getLastFinishCode()==0){
+		System.out.println("dasdasdasd"+control.getLastFinishCode());	
+		if(control.getLastFinishCode()==1){
 			pane.getChildren().clear();
 			StoryP1O1Pass();
-			}
+		}
 		else {
 			pane.getChildren().clear();
 			StoryP1O1Fail();
@@ -66,6 +67,7 @@ public class StoryMode implements OpMode{
 		//Go To Cliff
 		Button continueStoryButton = new Button("The second path is clear and leads to a high cliff.");
 		continueStoryButton.setOnAction(e->{
+			pane.getChildren().clear();
 			StoryP1O2Cliff();
 		});
 		
@@ -80,14 +82,14 @@ public class StoryMode implements OpMode{
 	}
 //AFTER PLATFORMER
 	public void StoryP1O1Pass(){
-		Label label = new Label("After falling into a volcano, then managing to climb to the top the eagle's strength has been depleted. "
+		Label label = new Label("After falling into a volcano, then managing to climb to the top the eagle’s strength has been depleted. "
 				+ "We start to fall and I, not wanting the eagle to become damaged I wrap my body to absorb any damage that may occur upon "
 				+ "impacting the ground. The eagle is Oll Korrect, I on the other hand have a bit of bruising due to hitting many trees during "
 				+ "our descent and hitting the ground forcefully. I pick up the eagle as it has not recovered from carrying me and so I take "
 				+ "it with me. As we walk through more forest, both exhausted from our journeys the sky becomes overcast and starts to "
 				+ "drizzle a bit. While still walking the same path the sky begins to cry over us its unrelenting tears. I decide to take "
 				+ "the eagle under my shirt to keep it warm. We pass and enormous tree, I look up to see that there are many nests atop it and "
-				+ "it seems that my feathered companion may in fact be one of its resident's. I take the eagle from under my shirt and it has "
+				+ "it seems that my feathered companion may in fact be one of its resident’s. I take the eagle from under my shirt and it has "
 				+ "just enough strength to fly to its nest. As I see it land I decide to continue on my journey of discovery in finding out "
 				+ "who I am. It is still pouring out; I see a small cave I can take shelter in while the rain subsides. I also see that at a "
 				+ "distance passing the cave is a field covered in white.");
@@ -100,12 +102,14 @@ public class StoryMode implements OpMode{
       //Go To Cave
       		Button continueStoryButton = new Button("I will go to the cave and rest until the rain subsides.");
       		continueStoryButton.setOnAction(e->{
+      			pane.getChildren().clear();
       			StoryP2O1Cave();
       		});
       		
             //Go To Field
       		Button continueStoryButton2 = new Button("I decide that the best course of action is to forgo the cave since time is of the essence in this journey.");
       		continueStoryButton2.setOnAction(e->{
+      			pane.getChildren().clear();
       			StoryP2O2Field();
       		});
         
@@ -129,7 +133,7 @@ public class StoryMode implements OpMode{
 				+ "forest, both exhausted from our journeys the sky becomes overcast and starts to drizzle a bit. While still walking the same "
 				+ "path the sky begins to cry over us its unrelenting tears. I decide to take the eagle under my shirt to keep it warm. "
 				+ "We pass and enormous tree, I look up to see that there are many nests atop it and it seems that my feathered companion "
-				+ "may in fact be one of its residents. I take the eagle from under my shirt and it has just enough strength to fly to its nest. "
+				+ "may in fact be one of its resident’s. I take the eagle from under my shirt and it has just enough strength to fly to its nest. "
 				+ "As I see it land I decide to continue on my journey of discovery in finding out who I am. It is still pouring out; I see a small "
 				+ "cave I can take shelter in while the rain subsides. I also see that at a distance passing the cave is a field covered in white.");
 		label.setFont(Font.font("Helvetica", 20));
@@ -141,12 +145,14 @@ public class StoryMode implements OpMode{
       //Go To Cave
       		Button continueStoryButton = new Button("I will go to the cave and rest until the rain subsides.");
       		continueStoryButton.setOnAction(e->{
+      			pane.getChildren().clear();
       			StoryP2O1Cave();
       		});
       		
             //Go To Field
       		Button continueStoryButton2 = new Button("I decide that the best course of action is to forgo the cave since time is of the essence in this journey.");
       		continueStoryButton2.setOnAction(e->{
+      			pane.getChildren().clear();
       			StoryP2O2Field();
       		});
         
@@ -171,7 +177,7 @@ public class StoryMode implements OpMode{
 				+ "I take it with me. As we walk through more forest, both exhausted from our journeys the sky becomes overcast and starts to drizzle a bit. "
 				+ "While still walking the same path the sky begins to cry over us its unrelenting tears. I decide to take the eagle under my shirt to keep "
 				+ "it warm. We pass and enormous tree, I look up to see that there are many nests atop it and it seems that my feathered companion may in "
-				+ "fact be one of its residentÂ’s. I take the eagle from under my shirt and it has just enough strength to fly to its nest. As I see it "
+				+ "fact be one of its resident’s. I take the eagle from under my shirt and it has just enough strength to fly to its nest. As I see it "
 				+ "land I decide to continue on my journey of discovery in finding out who I am. It is still pouring out; I see a small cave I can take "
 				+ "shelter in while the rain subsides. I also see that at a distance passing the cave is a field covered in white.");
 		label.setFont(Font.font("Helvetica", 20));
@@ -183,12 +189,14 @@ public class StoryMode implements OpMode{
         //Go To Cave
   		Button continueStoryButton = new Button("I will go to the cave and rest until the rain subsides.");
   		continueStoryButton.setOnAction(e->{
+  			pane.getChildren().clear();
     			StoryP2O1Cave();
   		});
   		
         //Go To Field
   		Button continueStoryButton2 = new Button("I decide that the best course of action is to forgo the cave since time is of the essence in this journey.");
   		continueStoryButton2.setOnAction(e->{
+  			pane.getChildren().clear();
      			StoryP2O2Field();
   		});
     
@@ -205,35 +213,37 @@ public class StoryMode implements OpMode{
 	public void StoryP2O1Cave(){
 		Label label = new Label("I enter the dark cave. Besides being dark, it is also dry and cold. I start a fire and cuddle next to the fire for warmth. "
 				+ "I lay my head to the floor and shut my eye to get a bit of rest before continuing. In my sleep I start to dream, I dream of a small "
-				+ "child in a white field training to become a ninja. Â“Could this young child be me?Â” I ask, but alas it is not since I am able to his "
-				+ "face clear as day. Â“Who could this child be?Â” I then ask, perhaps he is my son whom I was training to become a superior ninja to myself. "
+				+ "child in a white field training to become a ninja. “Could this young child be me?” I ask, but alas it is not since I am able to his "
+				+ "face clear as day. “Who could this child be?” I then ask, perhaps he is my son whom I was training to become a superior ninja to myself. "
 				+ "I am then awoken to a maniacal laugh coming deep from within this cave. I grab a piece of firewood to use as a torch. I venture into "
 				+ "the abyss of the cave I look at the wall and see murals of war, it seems like many ninjas fought a man in a Big Hat. Though the ninjas "
-				+ "seem to have their heads decapitated, Â“how can this be?Â” I ask, ninja are the supreme warriors of the land. A ninjaÂ’s strength is at "
+				+ "seem to have their heads decapitated, “how can this be?” I ask, ninja are the supreme warriors of the land. A ninja’s strength is at "
 				+ "the peak of humanity, their speed is unmatched, their sword is second to none. As I continue to walk the laughs get louder and louder. "
-				+ "I see another light besides mine at the end of the path. As I reach the other light the laughs stop and I hear a rough voice exclaim Â“I "
-				+ "have been waiting for you Ninja, are you ready to be my next victim?Â”. What I see next surprises me, it is a man in a Big Hat. "
+				+ "I see another light besides mine at the end of the path. As I reach the other light the laughs stop and I hear a rough voice exclaim “I "
+				+ "have been waiting for you Ninja, are you ready to be my next victim?”. What I see next surprises me, it is a man in a Big Hat. "
 				+ "Could this be the same man depicted on the cave wall, the one who decapitated many ninjas? I ask him who he was and if he was the "
 				+ "same person depicted in the paintings and how it was possible to have defeated so many ninjas since they are the supreme warriors. "
-				+ "His response was simple and concise, Â“my name is Logan, and yes I am the one who has defeated so many ninjaÂ’sÂ”. I ready my weapon and "
-				+ "he continues Â“still your weapon, ninjaÂ” he says very calmly Â“it is true that ninjas are the supreme warrior, but only PHYSICALLYÂ”. I ask "
-				+ "what he meant, he responds Â“I am a Wizard, the supreme warrior of the Mind. Your body may be the most superior, but your mind pales in "
-				+ "comparison to mine. I ask you ninja do you wish to battle me in a game of wits?Â”. I knew my response, I tell him");
+				+ "His response was simple and concise, “my name is Logan, and yes I am the one who has defeated so many ninja’s”. I ready my weapon and "
+				+ "he continues “still your weapon, ninja” he says very calmly “it is true that ninjas are the supreme warrior, but only PHYSICALLY”. I ask "
+				+ "what he meant, he responds “I am a Wizard, the supreme warrior of the Mind. Your body may be the most superior, but your mind pales in "
+				+ "comparison to mine. I ask you ninja do you wish to battle me in a game of wits?”. I knew my response, I tell him");
 		label.setFont(Font.font("Helvetica", 20));
 		label.setMaxWidth(Double.MAX_VALUE/2);
         label.setAlignment(Pos.CENTER);
 		label.setWrapText(true);
         label.setTextAlignment(TextAlignment.JUSTIFY);
         
-        //Accept Wizard's Challenge
+//StartPuzzle/Accept Wizard's Challenge
   		Button miniGameButton = new Button("Yes, I will take on any challenge to prove that the ninja is the supreme warrior in all aspects.");
   		miniGameButton.setOnAction(e->{
-  			control.startPuzzle("story");
+ 			control.startPuzzle("story");
 			
   			if(control.getLastFinishCode()==0){
+  				pane.getChildren().clear();
   				StoryP2O1Pass();
   				}
   			else {
+  				pane.getChildren().clear();
   				StoryP2O1Fail();
   			}
   		});
@@ -241,6 +251,7 @@ public class StoryMode implements OpMode{
         //Deny Wizard's Challenge 
   		Button continueStoryButton = new Button("No, I will not take on your challenge since your defeating of all other ninjas proves that we are not the supreme warrior in all aspects.");
   		continueStoryButton.setOnAction(e->{
+  			pane.getChildren().clear();
      			StoryP2O1ChallengeDenied();
   		});
     
@@ -256,10 +267,10 @@ public class StoryMode implements OpMode{
 	
 //AFTER PUZZLE
 		public void StoryP2O1Pass(){
-			Label label = new Label("Â“well it seems that not all ninjas lack the mental capacity to go head to head with the likes of meÂ” says the wizard "
-					+ "after I had defeated him. He the continues his ramblings Â“well young ninja, I the Wizard Logan, hereby claim you as the true supreme "
-					+ "warrior of this landÂ”. He then points toward the back of the cave and says to me Â“the exit is that way, continue on your journey and "
-					+ "you might find answers somedayÂ”. I leave the cave slightly happier than when I went into it. As I exit the cave I see the white field "
+			Label label = new Label("“well it seems that not all ninjas lack the mental capacity to go head to head with the likes of me” says the wizard "
+					+ "after I had defeated him. He the continues his ramblings “well young ninja, I the Wizard Logan, hereby claim you as the true supreme "
+					+ "warrior of this land”. He then points toward the back of the cave and says to me “the exit is that way, continue on your journey and "
+					+ "you might find answers someday”. I leave the cave slightly happier than when I went into it. As I exit the cave I see the white field "
 					+ "from before I see many white banana trees I am overcome with joy since bananas are my favorite fruit and from a distant memory it "
 					+ "seems that the white bananas of the white banana tree are the most delicious. I gather as many as I could carry, but everything was "
 					+ "quiet, too quiet. I was about to find out why it was too quiet, it was MONSTERS, I was surrounded by them and there was nowhere to run. "
@@ -277,9 +288,11 @@ public class StoryMode implements OpMode{
 	      			control.startDummyMiniGame("dummy_level");
 	    			
 	      			if(control.getLastFinishCode()==0){
+	      				pane.getChildren().clear();
 	      				StoryEndA();
 	      				}
 	      			else {
+	      				pane.getChildren().clear();
 	      				StoryEndB();
 	      			}
 	      		});
@@ -294,10 +307,10 @@ public class StoryMode implements OpMode{
 		}
 		
 		public void StoryP2O1Fail(){
-			Label label = new Label("Â“well it seems that all ninjas lack the mental capacity to go head to head with the likes of meÂ” says the wizard "
-					+ "after he had defeated me. He the continues his ramblings Â“well young ninja, I the Wizard Logan, give you this advice what you do "
-					+ "with it is up to you; train your mind as you do your body and then perhaps one day you will surpass meÂ”. He then points toward the "
-					+ "back of the cave and says to me Â“the exit is that way, continue on your journey and you might find answers somedayÂ”. I leave the "
+			Label label = new Label("“well it seems that all ninjas lack the mental capacity to go head to head with the likes of me” says the wizard "
+					+ "after he had defeated me. He the continues his ramblings “well young ninja, I the Wizard Logan, give you this advice what you do "
+					+ "with it is up to you; train your mind as you do your body and then perhaps one day you will surpass me”. He then points toward the "
+					+ "back of the cave and says to me “the exit is that way, continue on your journey and you might find answers someday”. I leave the "
 					+ "cave slightly sadder than when I went into it. As I exit the cave I see the white field from before I see many white banana trees I "
 					+ "am overcome with joy since bananas are my favorite fruit and from a distant memory it seems that the white bananas of the white "
 					+ "banana tree are the most delicious. I gather as many as I could carry, but everything was quiet, too quiet. I was about to find out "
@@ -316,9 +329,11 @@ public class StoryMode implements OpMode{
 	      			control.startDummyMiniGame("dummy_level");
 	    			
 	      			if(control.getLastFinishCode()==0){
+	      				pane.getChildren().clear();
 	      				StoryEndA();
 	      				}
 	      			else {
+	      				pane.getChildren().clear();
 	      				StoryEndB();
 	      			}
 	      		});
@@ -334,11 +349,11 @@ public class StoryMode implements OpMode{
 		
 //CALLENGE DENIED
 		public void StoryP2O1ChallengeDenied(){
-			Label label = new Label("Â“well it seems that all ninjas lack the mental capacity to go head to head with the likes of me, but where your "
-					+ "brethren were bested, you did not even try, you failed before you could see your true strengthÂ” says the wizard after I had denied "
-					+ "his challenge. He the continues his ramblings Â“well young ninja, I the Wizard Logan, consider you the worst adversary I have ever "
-					+ "had the displeasure of having in my presenceÂ”. He then points toward the back of the cave and says to me Â“the exit is that way, "
-					+ "continue on your journey and you might find answers somedayÂ”. I leave the cave sadder than when I went into it. As I exit the "
+			Label label = new Label("“well it seems that all ninjas lack the mental capacity to go head to head with the likes of me, but where your "
+					+ "brethren were bested, you did not even try, you failed before you could see your true strength” says the wizard after I had denied "
+					+ "his challenge. He the continues his ramblings “well young ninja, I the Wizard Logan, consider you the worst adversary I have ever "
+					+ "had the displeasure of having in my presence”. He then points toward the back of the cave and says to me “the exit is that way, "
+					+ "continue on your journey and you might find answers someday”. I leave the cave sadder than when I went into it. As I exit the "
 					+ "cave I see the white field from before I see many white banana trees I am overcome with joy since bananas are my favorite fruit "
 					+ "and from a distant memory it seems that the white bananas of the white banana tree are the most delicious. I gather as many as I "
 					+ "could carry, but everything was quiet, too quiet. I was about to find out why it was too quiet, it was MONSTERS, I was surrounded "
@@ -356,9 +371,11 @@ public class StoryMode implements OpMode{
 	  			control.startDummyMiniGame("dummy_level");
 				
 	  			if(control.getLastFinishCode()==0){
+	  				pane.getChildren().clear();
 	  				StoryEndA();
 	  				}
 	  			else {
+	  				pane.getChildren().clear();
 	  				StoryEndB();
 	  			}
 	  		});
@@ -376,8 +393,8 @@ public class StoryMode implements OpMode{
 					+ "down a hill. I get up and am covered in mud from head to toe, save for a small patch on my buttocks. As I start to walk the rain "
 					+ "washes most of the mud that had accumulated when I had slipped and fell. After the rain completely finishes washing me of mud I "
 					+ "look up at the sky and witness as the rays of the sun break through the overcast. Then in what seems to be a waking dream I see a "
-					+ "small child in the white field training to become a ninja. Â“Could this young child be me?Â” I ask, but alas it is not since I am "
-					+ "able to his face clear as day. Â“Who could this child be?Â” I then ask, perhaps he is my son whom I was training to become a superior "
+					+ "small child in the white field training to become a ninja. “Could this young child be me?” I ask, but alas it is not since I am "
+					+ "able to his face clear as day. “Who could this child be?” I then ask, perhaps he is my son whom I was training to become a superior "
 					+ "ninja to myself. I then slip again in the mud, but I do not fall down. As I recover from the small slip the small child disappears, "
 					+ "I concur that I was just having a waking dream. I was saddened for a moment because I was not able to resolve the meaning of the "
 					+ "waking dream. Then as I reached the white field I see many white banana trees I am overcome with joy since bananas are my favorite "
@@ -397,9 +414,11 @@ public class StoryMode implements OpMode{
 	  			control.startDummyMiniGame("dummy_level");
 				
 	  			if(control.getLastFinishCode()==0){
+	  				pane.getChildren().clear();
 	  				StoryEndA();
 	  				}
 	  			else {
+	  				pane.getChildren().clear();
 	  				StoryEndB();
 	  			}
 	  		});
