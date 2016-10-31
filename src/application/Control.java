@@ -49,7 +49,8 @@ public class Control extends Application{
 	}
 	
 	public void startTopDown(String filename){
-		startOpMode(new TopDown(), filename);
+		//startOpMode(new TopDown(), filename);
+		startOpMode(new DummyMiniGame(), filename);
 	}
 	
 	public void startDummyMiniGame(String filename){
@@ -78,7 +79,6 @@ public class Control extends Application{
 		
 		opModeStack.peek().end();
 		opModeStack.pop();
-		System.out.println("Recieved finishCode: " + finishCode);
 		
 		if(opModeStack.isEmpty()){
 			// Main Menu should be the bottom of the stack. If it completes, then the whole application should end.

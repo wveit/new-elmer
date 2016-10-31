@@ -1,53 +1,27 @@
 package application;
 
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import mainmenu.MainMenuScreen;
 
 public class MainMenu implements OpMode{
 	
-	Pane pane = new VBox();
+	Pane pane = new Pane();
+	MainMenuScreen screen;
 	Control control = null;
 	
 	public MainMenu(){
-		Label label = new Label("--- Main Menu ---");
-		Button storyModeButton = new Button("StoryMode");
-		storyModeButton.setOnAction(e -> {
-			control.startStoryMode("story_mode");
-		});
-		
-		Button dummyMiniGameButton = new Button("DummyMiniGame");	
-		dummyMiniGameButton.setOnAction(e -> {
-			control.startDummyMiniGame("dummy_string");
-		});
-		
-		Button platformerButton = new Button("Platformer");	
-		platformerButton.setOnAction(e -> {
-			control.startPlatformer("volcano_level.lvl");
-		});
-		
-		Button topDownButton = new Button("Top Down Game");	
-		topDownButton.setOnAction(e -> {
-			control.startTopDown("top_down_level");
-		});
-		
-		Button puzzleButton = new Button("Puzzle Game");	
-		puzzleButton.setOnAction(e -> {
-			control.startPuzzle("puzzle_level");
-		});
-		
-		Button exitButton = new Button("Exit");
-		exitButton.setOnAction(e -> {
-			control.notifyOfOpModeCompletion(this, 1);
-		});
-		
-		pane.getChildren().addAll(label, storyModeButton, dummyMiniGameButton, platformerButton, topDownButton, puzzleButton, exitButton);
+		screen = new MainMenuScreen(1200, 800);
+		screen.setMainMenu(this);
+		pane.getChildren().add(screen);
 	}
 	
 	@Override
 	public void setControl(Control control) {
 		this.control = control;
+	}
+	
+	public Control getControl(){
+		return control;
 	}
 
 	@Override
@@ -57,22 +31,24 @@ public class MainMenu implements OpMode{
 
 	@Override
 	public void start() {
-
+		screen.start();
+		screen.requestFocus();
 	}
 
 	@Override
 	public void pause() {
-
+		screen.stop();
 	}
 
 	@Override
 	public void resume() {
-		
+		screen.start();
+		screen.requestFocus();
 	}
 
 	@Override
 	public void end() {
-
+		screen.stop();
 	}
 
 	@Override
