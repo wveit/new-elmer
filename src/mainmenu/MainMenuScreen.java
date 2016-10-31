@@ -123,7 +123,7 @@ public class MainMenuScreen extends MyScreen {
 	@Override
 	public void stop(){
 		super.stop();
-		soundPlayer.pause();
+		soundPlayer.stop();
 	}
 
 }
