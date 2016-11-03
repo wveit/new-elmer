@@ -1,13 +1,14 @@
 package platformer.level;
 
 
+import java.util.Scanner;
+
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import platformer.engine.screen.MyScreen;
 import platformer.engine.shape.Rectangle;
 import platformer.game.*;
@@ -20,17 +21,15 @@ public class LevelScreen extends MyScreen{
 	private Rectangle screenDragRect = new Rectangle();
 	private ScreenWorldRectConverter rectConverter = null;
 	private Renderer renderer = null;
-	private Stage stage;
+	private String currentLevelFile = "assets/platformer/volcano_level.lvl";
+	
 	
 	public LevelScreen(int width, int height) {
 		super(width, height);
 		rectConverter = new ScreenWorldRectConverter(new Rectangle(0, 0, width, height), new Rectangle(0, 0, width, height));
-		world.leftBoundary = new Rectangle(); world.rightBoundary = new Rectangle(); world.gravity = -1000; world.goal = new Goal(0,0,0,0); world.player = new Player(0,0,0,0);
+		//world.leftBoundary = new Rectangle(); world.rightBoundary = new Rectangle(); world.gravity = -1000; world.goal = new Goal(0,0,0,0); world.player = new Player(0,0,0,0);
 		renderer = new Renderer(this.getGraphicsContext2D(), rectConverter);
 		this.start();
-		
-//		stage = new Stage();
-//		stage.show();
 	}
 	
 	private void inputEntity(int code, Rectangle screenRect){
@@ -116,11 +115,20 @@ public class LevelScreen extends MyScreen{
 		else if(e.getCode() == KeyCode.DOWN)
 			rectConverter.getWorldViewport().move(0, -10);
 		
-		// save [& load]
+		// save & load
 		else if(e.getCode() == KeyCode.S)
-			world.save("assets/platformer/blah.lvl");
+			WorldFileSystem.saveWorld(world, currentLevelFile);
 		else if(e.getCode() == KeyCode.L)
-			world.load("assets/platformer/blah.lvl");
+			WorldFileSystem.loadWorld(world, currentLevelFile);
+		else if(e.getCode() == KeyCode.A){
+			System.out.print("Set current file: ");
+			Scanner scanner = new Scanner(System.in);
+			currentLevelFile = scanner.nextLine();
+			scanner.close();
+			System.out.println("Current file set to: " + currentLevelFile);
+		}
+		else if(e.getCode() == KeyCode.R)
+			world.clear();
 	}
 	
 	@Override

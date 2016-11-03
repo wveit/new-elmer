@@ -1,12 +1,10 @@
 package platformer.game;
 
-import java.io.File;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.media.*;
 import platformer.engine.shape.Rectangle;
-import javafx.util.Duration;
+import platformer.engine.sound.SoundPlayer;
 import platformer.engine.screen.MyScreen;
 
 public class GameScreen extends MyScreen{
@@ -15,17 +13,22 @@ public class GameScreen extends MyScreen{
 	
 	private boolean eagleAnimation = false;
 	private Eagle eagle = new Eagle();
-	private MediaPlayer eagleMediaPlayer;
+	private SoundPlayer eagleSound = new SoundPlayer();
 	private double eagleTimer = 0;
 	
 	private World world;
 	private Renderer renderer;
-	private MediaPlayer mediaPlayer;
+	private SoundPlayer backgroundMusic = new SoundPlayer();
 	ScreenWorldRectConverter converter;
 	
 	private long lastNanoseconds = 0;
 	private int logicFPS = 60;
 	private double logicAccumulator = 0;
+	
+	private boolean scrollVertical = false;
+	private boolean scrollHorizontal = true;
+	
+	private String currentLevel = "assets/platformer/volcano_level.lvl";
 	
 	public GameScreen(int width, int height){
 		super(width, height);
@@ -33,22 +36,21 @@ public class GameScreen extends MyScreen{
 		world = new World();
 		converter = new ScreenWorldRectConverter(new Rectangle(0, 0, width, height), new Rectangle(0, 0, width, height));
 		renderer = new Renderer(this.getGraphicsContext2D(), converter);
-		
-		setUpGameMusic();
+		backgroundMusic.load("assets/platformer/airwolf.wav");
+		backgroundMusic.setRepeat(true);
+		eagleSound.load("assets/platformer/eagle.wav");
 	}
 	
 	@Override
 	public void start(){
 		super.start();
-		if(mediaPlayer != null)
-			mediaPlayer.play();
+		backgroundMusic.play();
 	}
 	
 	@Override
 	public void stop(){
 		super.stop();
-		if(mediaPlayer != null)
-			mediaPlayer.pause();
+		backgroundMusic.pause();
 		
 	}
 	
@@ -57,33 +59,10 @@ public class GameScreen extends MyScreen{
 	}
 	
 	public void load(String filename){
-		world.load(filename);
+		WorldFileSystem.loadWorld(world, currentLevel);
 	}
 	
-	public void setUpGameMusic(){
-		File file = new File("assets/platformer/airwolf.wav");
-		if(file.exists()){			
-			Media media = null;
-			try{
-				media = new Media("file:" + file.getAbsolutePath());
-			}catch(Exception e){
-				System.out.println("Exception while loading audio.");
-				e.printStackTrace();
-			}
-			
-			mediaPlayer = new MediaPlayer(media);
-			mediaPlayer.setOnEndOfMedia(new Runnable(){
-				@Override
-				public void run(){
-					mediaPlayer.seek(Duration.ZERO);
-				}
-			});
-		}
-		else{
-			mediaPlayer = null;
-			System.out.println("could not find audio file.");
-		}
-	}
+	
 	
 	public void doEagleAnimation(double deltaTime){
 		double oldX = eagle.rect().minX();
@@ -122,16 +101,10 @@ public class GameScreen extends MyScreen{
 		else if(world.player.onGoal()){
 			eagleAnimation = true;
 			eagle.setupToGetPlayer(world.player);
-			
-			File file = new File("assets/platformer/eagle.wav");
-			Media media = new Media("file:" + file.getAbsolutePath());
-			eagleMediaPlayer = new MediaPlayer(media);
-			eagleMediaPlayer.play();
-			
+			eagleSound.play();			
 		}
 		else if(world.player.isDead()){
 			renderer.renderGameOver();
-			
 		}
 		else{
 			
@@ -147,7 +120,10 @@ public class GameScreen extends MyScreen{
 			// Draw
 			GraphicsContext gc = this.getGraphicsContext2D();
 			gc.clearRect(0, 0, getWidth(), getHeight());
-			converter.getWorldViewport().setY(Math.max(0, world.player.rect().centerY() - converter.getWorldViewport().height() / 2));
+			if(scrollVertical)
+				converter.getWorldViewport().setY(Math.max(0, world.player.rect().centerY() - converter.getWorldViewport().height() / 2));
+			if(scrollHorizontal)
+				converter.getWorldViewport().setX(world.player.rect().centerX() - converter.getWorldViewport().width() / 2);
 			renderer.render(world);
 
 		}
@@ -171,7 +147,8 @@ public class GameScreen extends MyScreen{
 		}
 		else if(e.getCode() == KeyCode.R){
 			if(world.player.isDead()){
-				world.load("volcano_level.lvl");
+				world.clear();
+				WorldFileSystem.loadWorld(world, currentLevel);
 			}
 		}
 		

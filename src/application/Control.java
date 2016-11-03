@@ -49,8 +49,8 @@ public class Control extends Application{
 	}
 	
 	public void startTopDown(String filename){
-		//startOpMode(new TopDown(), filename);
-		startOpMode(new DummyMiniGame(), filename);
+		startOpMode(new TopDown(), filename);
+		//startOpMode(new DummyMiniGame(), filename);
 	}
 	
 	public void startDummyMiniGame(String filename){
