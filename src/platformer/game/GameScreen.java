@@ -25,8 +25,8 @@ public class GameScreen extends MyScreen{
 	private int logicFPS = 60;
 	private double logicAccumulator = 0;
 	
-	private boolean scrollVertical = false;
-	private boolean scrollHorizontal = true;
+	private boolean scrollVertical = true;
+	private boolean scrollHorizontal = false;
 	
 	private String currentLevel = "assets/platformer/volcano_level.lvl";
 	
@@ -59,6 +59,7 @@ public class GameScreen extends MyScreen{
 	}
 	
 	public void load(String filename){
+		world.clear();
 		WorldFileSystem.loadWorld(world, currentLevel);
 	}
 	
