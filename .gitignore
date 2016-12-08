@@ -1,10 +1,9 @@
-# ignore everything
+# Ignore everything
 *
 
-# except ...
-!.gitignore
+# But not these...
+!*/
 !*.java
-!*.lvl
 !*.xcf
-!*.png
 !*.wav
+!*.png
