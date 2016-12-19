@@ -1,4 +1,4 @@
-package platformer.game;
+package platformer.world;
 
 import platformer.engine.shape.Rectangle;
 

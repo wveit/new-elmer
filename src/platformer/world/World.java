@@ -1,15 +1,12 @@
-package platformer.game;
+package platformer.world;
 
 import java.util.ArrayList;
-import platformer.engine.shape.Rectangle;
 
 public class World {
 	
-	public double gravity = 0;
+	public double gravity = -1000;
 	public Player player = null;
 	public Goal goal = null;
-	public Rectangle leftBoundary = new Rectangle();
-	public Rectangle rightBoundary = new Rectangle();
 	public ArrayList<Platform> platformList = new ArrayList<>();
 	public ArrayList<Enemy> enemyList = new ArrayList<>();
 	
@@ -18,12 +15,11 @@ public class World {
 		clear();
 	}
 	
+
 	
 	public void clear(){
 		player = new Player(50, 50, 50, 50);
 		goal = new Goal(50, 50, 50, 50);
-		leftBoundary = new Rectangle();
-		leftBoundary = new Rectangle();
 		platformList.clear();
 		enemyList.clear();
 	}

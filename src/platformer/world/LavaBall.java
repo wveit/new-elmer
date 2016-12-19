@@ -1,4 +1,4 @@
-package platformer.game;
+package platformer.world;
 
 import platformer.engine.physics.Collision;
 import platformer.engine.physics.CollisionInfo;

@@ -1,9 +1,17 @@
-package platformer.game;
+package platformer.graphics;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import platformer.engine.shape.Rectangle;
 import platformer.engine.sprite.SpriteAnimator;
+import platformer.world.Enemy;
+import platformer.world.Goal;
+import platformer.world.LavaMonster;
+import platformer.world.Platform;
+import platformer.world.Player;
+import platformer.world.Spikey;
+import platformer.world.Vulcor;
+import platformer.world.World;
 
 import java.io.File;
 
@@ -20,7 +28,6 @@ public class Renderer {
 	private Image backgroundImage;
 	private Image platformImage;
 	private Image gameOverImage;
-	private Image eagleImage;
 	
 	private SpriteAnimator ninjaAnimator;
 	private SpriteAnimator lavaMonsterAnimator;
@@ -38,7 +45,6 @@ public class Renderer {
 			ninjaAnimator.addRectToMode(0, new Rectangle(105, 0, 105, 175));
 			ninjaAnimator.addRectToMode(0, new Rectangle(210, 0, 105, 175));
 			ninjaAnimator.addRectToMode(0, new Rectangle(315, 0, 105, 175));
-			ninjaAnimator.showBox(true);
 			
 			lavaMonsterImage = new Image(new File("assets/platformer/lava_monster.png").toURI().toURL().toString());
 			lavaMonsterAnimator = new SpriteAnimator(lavaMonsterImage);
@@ -50,7 +56,6 @@ public class Renderer {
 			backgroundImage = new Image(new File("assets/platformer/volcano_background.png").toURI().toURL().toString());
 			platformImage = new Image(new File("assets/platformer/platform.png").toURI().toURL().toString());
 			gameOverImage = new Image(new File("assets/platformer/gameover.png").toURI().toURL().toString());
-			eagleImage = new Image(new File("assets/platformer/eagle.png").toURI().toURL().toString());
 		
 		} 
 		catch(Exception e){
@@ -70,7 +75,6 @@ public class Renderer {
 		
 		// Draw enemies
 		// Special logic for Lava so that it will be drawn last (it should always be on top)
-		Lava lava = null;
 		for(Enemy e : world.enemyList){
 			if(e instanceof LavaMonster)
 				render((LavaMonster)e);
@@ -78,13 +82,9 @@ public class Renderer {
 				render((Spikey)e);
 			else if(e instanceof Vulcor)
 				render((Vulcor)e);
-			else if(e instanceof Lava)
-				lava = (Lava)e;
 			else
 				render(e);
 		}
-		if(lava != null)
-			render(lava);
 		
 		// Draw Goal
 		if(world.goal != null)
@@ -97,8 +97,7 @@ public class Renderer {
 	}
 	
 
-	public void renderBackground(){
-
+	public void renderBackground(){		
 		double worldTop = 5000;
 		
 		// find dest Rectangle
@@ -203,13 +202,6 @@ public class Renderer {
 		else
 			draw(platformImage, new Rectangle(0, 0, imageWidth, r.height()), r);
 	}
-	
-	public void render(Lava lava){
-		Rectangle r = converter.worldRectToScreenRect(lava.rect());
-		
-		gc.setFill(Color.ORANGE);
-		gc.fillRect(r.minX(), r.minY(), r.width(), r.height());
-	}
 
 	public void renderGameOver(){
 		gc.drawImage(gameOverImage, 0, 0, converter.getScreen().width(), converter.getScreen().height());
@@ -222,9 +214,6 @@ public class Renderer {
 				destRect.minX(), destRect.minY(), destRect.width(), destRect.height());
 	}
 	
-	public void render(Eagle eagle){
-		Rectangle r = converter.worldRectToScreenRect(eagle.rect());
-		gc.drawImage(eagleImage, r.minX(), r.minY(), r.width(), r.height());
-	}
+
 
 }

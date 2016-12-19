@@ -1,4 +1,4 @@
-package platformer.game;
+package platformer.world;
 
 import platformer.engine.physics.Collision;
 import platformer.engine.physics.CollisionInfo;
@@ -39,9 +39,6 @@ public class LavaMonster implements Enemy{
 			}
 		}
 		
-		if(rect.overlaps(world.leftBoundary) || rect.overlaps(world.rightBoundary)){
-			vX = -vX;
-		}
 	}
 	
 	@Override

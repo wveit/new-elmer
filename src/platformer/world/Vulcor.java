@@ -1,4 +1,4 @@
-package platformer.game;
+package platformer.world;
 
 
 import platformer.engine.shape.Rectangle;
@@ -60,8 +60,8 @@ public class Vulcor implements Enemy{
 	@Override
 	public boolean isDead(){ return false; }
 	
-	static class ActionMode{
-		static final int RELAXED = 0;
-		static final int READY = 1;
+	public static class ActionMode{
+		public static final int RELAXED = 0;
+		public static final int READY = 1;
 	}
 }

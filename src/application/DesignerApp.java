@@ -2,20 +2,18 @@ package application;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import platformer.level.LevelScreen;
+import platformer.screen.LevelLayoutPane;
 
-public class LevelLayoutApp extends Application {
+public class DesignerApp extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		LevelScreen ls = new LevelScreen(1200, 800);
-		Pane pane = new Pane(ls);
+		LevelLayoutPane pane = new LevelLayoutPane();
 		primaryStage.setScene(new Scene(pane));
-		primaryStage.setTitle("level layout");
+		primaryStage.setTitle("Level Designer");
 		primaryStage.show();
-		ls.requestFocus();
+		pane.requestFocus();
 	}
 	
 	public static void main(String[] args){

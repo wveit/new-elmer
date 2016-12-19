@@ -1,4 +1,4 @@
-package platformer.game;
+package platformer.utility;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -6,8 +6,40 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 import platformer.engine.shape.Rectangle;
+import platformer.world.Enemy;
+import platformer.world.Goal;
+import platformer.world.LavaMonster;
+import platformer.world.Platform;
+import platformer.world.Player;
+import platformer.world.Spikey;
+import platformer.world.Vulcor;
+import platformer.world.World;
 
 public class WorldFileSystem {
+	
+	public static String worldToString(World world){
+		StringBuilder str = new StringBuilder();
+		
+		str.append("gravity " + world.gravity + " ;\n");
+		
+		Rectangle r = world.player.rect();
+		str.append("player " + r.minX() + " " + r.minY() + " " + r.width() + " " + r.height() + " ;\n");
+		
+		r = world.goal.rect();
+		str.append("goal " + r.minX() + " " + r.minY() + " " + r.width() + " " + r.height() + " ;\n");
+		
+		for(Platform p : world.platformList){
+			r = p.rect();
+			str.append("platform " + r.minX() + " " + r.minY() + " " + r.width() + " " + r.height() + " ;\n");
+		}
+		
+		for(Enemy e : world.enemyList){
+			r = e.rect();
+			str.append(enemyName(e) + " " + r.minX() + " " + r.minY() + " " + r.width() + " " + r.height() + " ;\n");
+		}
+		
+		return str.toString();
+	}
 	
 	public static boolean saveWorld(World world, String filename){
 		PrintWriter pw = null;
@@ -19,31 +51,7 @@ public class WorldFileSystem {
 			System.out.println("WorldFileSystem.saveWorld(...) FileNotFoundException");
 			return false;
 		}
-		
-		pw.println("gravity " + world.gravity + " ;");
-		
-		Rectangle r = world.player.rect();
-		pw.println("player " + r.minX() + " " + r.minY() + " " + r.width() + " " + r.height() + " ;");
-		
-		r = world.goal.rect();
-		pw.println("goal " + r.minX() + " " + r.minY() + " " + r.width() + " " + r.height() + " ;");
-		
-		r = world.leftBoundary;
-		pw.println("leftBoundary " + r.minX() + " " + r.minY() + " " + r.width() + " " + r.height() + " ;");
-		
-		r = world.rightBoundary;
-		pw.println("rightBoundary " + r.minX() + " " + r.minY() + " " + r.width() + " " + r.height() + " ;");
-		
-		for(Platform p : world.platformList){
-			r = p.rect();
-			pw.println("platform " + r.minX() + " " + r.minY() + " " + r.width() + " " + r.height() + " ;");
-		}
-		
-		for(Enemy e : world.enemyList){
-			r = e.rect();
-			pw.println(enemyName(e) + " " + r.minX() + " " + r.minY() + " " + r.width() + " " + r.height() + " ;");
-		}
-		
+		pw.println(worldToString(world));		
 		pw.close();
 		return true;
 	}
@@ -55,33 +63,74 @@ public class WorldFileSystem {
 			return "spikey";
 		else if(e instanceof Vulcor)
 			return "vulcor";
-		else if(e instanceof Lava)
-			return "lava";
 		else
 			return "monster";
 	}
 	
-	public static boolean loadWorld(World world, String filename){
+	public void loadWorldFromString(World world, String levelDataString){
+		Scanner in = new Scanner(levelDataString);		
+		while(in.hasNext()){
+			loadEntity(world, in);
+		}
+		in.close();
+	}
+	
+	public static boolean loadWorldFromFile(World world, String filename){
+//		Scanner in = null;
+//		try{
+//			File file = new File(filename);
+//			if(!file.exists()){
+//				System.out.println("WorldFileSystem.loadWorld(...) - cannot find file " + filename);
+//				return false;
+//			}
+//			in = new Scanner(file);
+//		}
+//		catch(FileNotFoundException e){
+//			System.out.println("WorldFileSystem.loadWorld(...) - Exception while loading file " + filename);
+//			return false;
+//		}
+//		
+//		while(in.hasNext()){
+//			loadEntity(world, in);
+//		}
+//		
+//		in.close();
+//		return true;
+		
+		String levelData = fileToString(filename);
+		if(levelData.isEmpty())
+			return false;
+		
+		Scanner in = new Scanner(levelData);
+		while(in.hasNext())
+			loadEntity(world, in);
+		in.close();
+		return true;
+	}
+	
+	public static String fileToString(String filename){
 		Scanner in = null;
 		try{
 			File file = new File(filename);
 			if(!file.exists()){
-				System.out.println("WorldFileSystem.loadWorld(...) - cannot find file " + filename);
-				return false;
+				System.out.println("WorldFileSystem.fileToString(...) - cannot find file " + filename);
+				return "";
 			}
 			in = new Scanner(file);
 		}
 		catch(FileNotFoundException e){
-			System.out.println("WorldFileSystem.loadWorld(...) - Exception while loading file " + filename);
-			return false;
+			System.out.println("WorldFileSystem.fileToString(...) - Exception while loading file " + filename);
+			return "";
 		}
 		
+		StringBuilder str = new StringBuilder();
+		
 		while(in.hasNext()){
-			loadEntity(world, in);
+			str.append(in.nextLine() + "\n");
 		}
 		
 		in.close();
-		return true;
+		return str.toString();
 	}
 	
 	private static void loadEntity(World world, Scanner in){
@@ -104,12 +153,6 @@ public class WorldFileSystem {
 			world.enemyList.add(new Vulcor(Double.parseDouble(tokenList.get(1)), Double.parseDouble(tokenList.get(2)), Double.parseDouble(tokenList.get(3)), Double.parseDouble(tokenList.get(4))));
 		else if(tokenList.get(0).equals("platform"))
 			world.platformList.add(new Platform(Double.parseDouble(tokenList.get(1)), Double.parseDouble(tokenList.get(2)), Double.parseDouble(tokenList.get(3)), Double.parseDouble(tokenList.get(4))));
-		else if(tokenList.get(0).equals("leftBoundary"))
-			world.leftBoundary = new Rectangle(Double.parseDouble(tokenList.get(1)), Double.parseDouble(tokenList.get(2)), Double.parseDouble(tokenList.get(3)), Double.parseDouble(tokenList.get(4)));
-		else if(tokenList.get(0).equals("rightBoundary"))
-			world.rightBoundary = new Rectangle(Double.parseDouble(tokenList.get(1)), Double.parseDouble(tokenList.get(2)), Double.parseDouble(tokenList.get(3)), Double.parseDouble(tokenList.get(4)));
-		else if(tokenList.get(0).equals("lava"))
-			world.enemyList.add(new Lava(Double.parseDouble(tokenList.get(1)), Double.parseDouble(tokenList.get(2)), Double.parseDouble(tokenList.get(3)), Double.parseDouble(tokenList.get(4))));
 		else if(tokenList.get(0).equals("gravity"))
 			world.gravity = Double.parseDouble(tokenList.get(1));
 		else
@@ -120,11 +163,6 @@ public class WorldFileSystem {
 		world.gravity = -1000;
 		
 		double width = 1200;
-		double height = 800;
-		double levelHeight = 10000;
-		
-		world.leftBoundary = new Rectangle(-50, 0, 50, levelHeight * 100);
-		world.rightBoundary = new Rectangle(width, 0, 50, levelHeight * 100);
 		
 		world.platformList.add( new Platform(0, 0, width, 50) );
 		world.platformList.add( new Platform(0, 250, width / 3, 50) );
@@ -143,7 +181,6 @@ public class WorldFileSystem {
 		world.enemyList.add(new Spikey(600, 600, 50, 50));
 		
 		world.player = new Player(250, 250, 50, 75);
-		world.enemyList.add(new Lava(0, -100 - height, width, height));
 		
 		return true;
 	}

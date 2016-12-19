@@ -1,4 +1,4 @@
-package platformer.level;
+package platformer.screen;
 
 
 import java.util.Scanner;
@@ -11,23 +11,27 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import platformer.engine.screen.MyScreen;
 import platformer.engine.shape.Rectangle;
-import platformer.game.*;
+import platformer.graphics.Renderer;
+import platformer.graphics.ScreenWorldRectConverter;
+import platformer.utility.WorldFileSystem;
+import platformer.world.*;
 
-public class LevelScreen extends MyScreen{
+public class DesignerScreen extends MyScreen{
 
 	private World world = new World();
 	private int entityCode = 0; // 0-player, 1-platform, 2-lavaMonster, 3-Spikey, 4-Vulcor, 5-Goal
 	private boolean leftMouseDown = false;
+	private boolean deleteMode = false;
 	private Rectangle screenDragRect = new Rectangle();
 	private ScreenWorldRectConverter rectConverter = null;
 	private Renderer renderer = null;
 	private String currentLevelFile = "assets/platformer/volcano_level.lvl";
 	
+	public void setDeleteMode(boolean flag){deleteMode = flag;}
 	
-	public LevelScreen(int width, int height) {
+	public DesignerScreen(int width, int height) {
 		super(width, height);
 		rectConverter = new ScreenWorldRectConverter(new Rectangle(0, 0, width, height), new Rectangle(0, 0, width, height));
-		//world.leftBoundary = new Rectangle(); world.rightBoundary = new Rectangle(); world.gravity = -1000; world.goal = new Goal(0,0,0,0); world.player = new Player(0,0,0,0);
 		renderer = new Renderer(this.getGraphicsContext2D(), rectConverter);
 		this.start();
 	}
@@ -69,6 +73,18 @@ public class LevelScreen extends MyScreen{
 			gc.strokeRect(temp.minX(), temp.minY(), temp.width(), temp.height());
 		}
 	
+	}
+	
+	public void setEntityCode(int code){
+		entityCode = code;
+	}
+	
+	public World getWorld(){
+		return world;
+	}
+	
+	public void setWorld(World world){
+		this.world = world;
 	}
 	
 	///////////////////////////////////////////////////
@@ -119,7 +135,7 @@ public class LevelScreen extends MyScreen{
 		else if(e.getCode() == KeyCode.S)
 			WorldFileSystem.saveWorld(world, currentLevelFile);
 		else if(e.getCode() == KeyCode.L)
-			WorldFileSystem.loadWorld(world, currentLevelFile);
+			WorldFileSystem.loadWorldFromFile(world, currentLevelFile);
 		else if(e.getCode() == KeyCode.A){
 			System.out.print("Set current file: ");
 			Scanner scanner = new Scanner(System.in);
@@ -131,19 +147,45 @@ public class LevelScreen extends MyScreen{
 			world.clear();
 	}
 	
+	public void deleteObjectAt(double x, double y){
+		Rectangle r = new Rectangle(x, y, 1, 1);
+		r = rectConverter.screenRectToWorldRect(r);
+		
+		for(Platform p : world.platformList){
+			if(r.inside(p.rect())){
+				world.platformList.remove(p);
+				return;
+			}
+		}
+		
+		for(Enemy e : world.enemyList){
+			if(r.inside(e.rect())){
+				world.enemyList.remove(e);
+				return;
+			}
+		}
+	}
+	
 	@Override
 	public void mousePressed(MouseEvent e){
 		if(e.getButton() == MouseButton.PRIMARY){
-			leftMouseDown = true;
-			screenDragRect.reset(e.getX(), e.getY(), 0, 0);
+			if(deleteMode){
+				deleteObjectAt(e.getX(), e.getY());
+			}
+			else{
+				leftMouseDown = true;
+				screenDragRect.reset(e.getX(), e.getY(), 0, 0);
+			}
 		}
 	}
 	
 	@Override
 	public void mouseReleased(MouseEvent e){
 		if(e.getButton() == MouseButton.PRIMARY){
-			leftMouseDown = false;
-			inputEntity(entityCode, screenDragRect);
+			if(!deleteMode){
+				leftMouseDown = false;
+				inputEntity(entityCode, screenDragRect);
+			}
 		}
 	}
 	
