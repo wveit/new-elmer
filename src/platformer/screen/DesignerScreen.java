@@ -26,6 +26,7 @@ public class DesignerScreen extends MyScreen{
 	private ScreenWorldRectConverter rectConverter = null;
 	private Renderer renderer = null;
 	private String currentLevelFile = "assets/platformer/volcano_level.lvl";
+	private int scrollSpeed = 20;
 	
 	public void setDeleteMode(boolean flag){deleteMode = flag;}
 	
@@ -54,7 +55,7 @@ public class DesignerScreen extends MyScreen{
 	}
 	
 	@Override
-	public void tick(long nanoSeconds){
+	public void tick(double deltaTime){
 		draw();
 	}
 	
@@ -123,13 +124,13 @@ public class DesignerScreen extends MyScreen{
 		
 		// change which part of the game world is displayed in window
 		else if(e.getCode() == KeyCode.LEFT)
-			rectConverter.getWorldViewport().move(-10, 0);
+			rectConverter.getWorldViewport().move(-scrollSpeed, 0);
 		else if(e.getCode() == KeyCode.RIGHT)
-			rectConverter.getWorldViewport().move(10, 0);
+			rectConverter.getWorldViewport().move(scrollSpeed, 0);
 		else if(e.getCode() == KeyCode.UP)
-			rectConverter.getWorldViewport().move(0, 10);
+			rectConverter.getWorldViewport().move(0, scrollSpeed);
 		else if(e.getCode() == KeyCode.DOWN)
-			rectConverter.getWorldViewport().move(0, -10);
+			rectConverter.getWorldViewport().move(0, -scrollSpeed);
 		
 		// save & load
 		else if(e.getCode() == KeyCode.S)

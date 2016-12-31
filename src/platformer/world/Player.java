@@ -11,7 +11,7 @@ public class Player{
 	private boolean requestLeft, requestRight, requestJump;
 	private boolean isOnPlatform;
 	private double moveSpeed = 250;
-	private double jumpSpeed = 1000;
+	private double jumpSpeed = 750;
 	private boolean isDead;
 	private boolean onGoal;
 	
@@ -112,8 +112,6 @@ public class Player{
 	private void privateReset(){
 		vX = vY = 0;
 		requestLeft = requestRight = requestJump = isDead = onGoal = isOnPlatform = false;	
-		moveSpeed = 250;
-		jumpSpeed = 1000;
 	}
 	
 	public double vX(){ return vX; }

@@ -13,13 +13,12 @@ import javafx.util.Duration;
 public class MyScreen extends Canvas{
 
 	private Timeline timeline;
+	private int fps = 60;
 	
 	public MyScreen(int width, int height){
 		super(width, height);
 		
-		Duration d = Duration.millis(16);
-		timeline = new Timeline(new KeyFrame(d, e->{tick((long)(System.currentTimeMillis()*1000000));}));
-		timeline.setCycleCount(Animation.INDEFINITE);
+		setTimeline();
 		
 		setOnKeyPressed(new EventHandler<KeyEvent>(){
 			@Override
@@ -53,7 +52,18 @@ public class MyScreen extends Canvas{
 
 	}
 	
-
+	private void setTimeline(){
+		double frameMillis = 1000.0 / fps;
+		double deltaTime = frameMillis / 1000.0;
+		Duration d = Duration.millis(frameMillis);
+		timeline = new Timeline(new KeyFrame(d, e->{tick(deltaTime);}));
+		timeline.setCycleCount(Animation.INDEFINITE);
+	}
+	
+	public void setFPS(int fps){
+		this.fps = fps;
+		setTimeline();
+	}
 	
 	public void start(){
 		timeline.play();
@@ -63,7 +73,7 @@ public class MyScreen extends Canvas{
 		timeline.stop();
 	}
 	
-	public void tick(long nanoseconds){
+	public void tick(double deltaTime){
 		
 	}
 	

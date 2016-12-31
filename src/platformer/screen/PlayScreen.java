@@ -13,22 +13,17 @@ import platformer.world.World;
 import platformer.engine.screen.MyScreen;
 
 public class PlayScreen extends MyScreen{
-	
-	IntListener endOfGameListener = null;
-	
+
 	private World world;
 	private Renderer renderer;
 	private SoundPlayer backgroundMusic = new SoundPlayer();
-	ScreenWorldRectConverter converter;
-	
-	private long lastNanoseconds = 0;
-	private int logicFPS = 60;
-	private double logicAccumulator = 0;
+	private ScreenWorldRectConverter converter;
 	
 	private boolean scrollVertical = true;
 	private boolean scrollHorizontal = true;
 	
 	private String currentLevel = "assets/platformer/volcano_level.lvl";
+	private IntListener endOfGameListener = null;
 	
 	public PlayScreen(int width, int height){
 		super(width, height);
@@ -42,8 +37,8 @@ public class PlayScreen extends MyScreen{
 	
 	@Override
 	public void start(){
-		world.player.setIsDead(false);
 		super.start();
+		world.player.setIsDead(false);
 		backgroundMusic.play();
 	}
 	
@@ -58,6 +53,7 @@ public class PlayScreen extends MyScreen{
 	}
 	
 	public void load(String filename){
+		currentLevel = filename;
 		world.clear();
 		WorldFileSystem.loadWorldFromFile(world, filename);
 	}
@@ -74,37 +70,14 @@ public class PlayScreen extends MyScreen{
 	
 
 	@Override
-	public void tick(long nanoseconds){
-		// Determine deltaTime
-		if(lastNanoseconds == 0)
-			lastNanoseconds = nanoseconds;
+	public void tick(double deltaTime){
+		world.update(deltaTime);
 		
-		double deltaTime = (nanoseconds - lastNanoseconds) / 1000000000.0;
-		lastNanoseconds = nanoseconds;
-		
-
-		
-		
-			
-		logicAccumulator += deltaTime;
-		while(logicAccumulator >= 1.0 / logicFPS){
-			// Update game logic
-			world.update(1.0 / logicFPS);
-			
-			logicAccumulator -= 1.0 / logicFPS;
-		}
-
-		// print some info
-		if(world.player.onGoal())
-			System.out.println("GameScreen.tick(...) -> Player is on goal");		
-		if(world.player.isDead())
-			System.out.println("GameScreen.tick(...) -> Player is dead");
-
 		// Draw
 		GraphicsContext gc = this.getGraphicsContext2D();
 		gc.clearRect(0, 0, getWidth(), getHeight());
 		if(scrollVertical)
-			converter.getWorldViewport().setY(Math.max(0, world.player.rect().centerY() - converter.getWorldViewport().height() / 2));
+			converter.getWorldViewport().setY(world.player.rect().centerY() - converter.getWorldViewport().height() / 4);
 		if(scrollHorizontal)
 			converter.getWorldViewport().setX(world.player.rect().centerX() - converter.getWorldViewport().width() / 2);
 		renderer.render(world);

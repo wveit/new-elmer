@@ -9,6 +9,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import platformer.engine.screen.MyScreen;
+import platformer.utility.FocusFixer;
 import platformer.utility.Input;
 import platformer.utility.WorldFileSystem;
 import platformer.world.World;
@@ -34,6 +35,7 @@ public class LevelLayoutPane extends VBox{
 		
 		this.setOnKeyPressed(e->{onKeyPress(e);});
 		this.setOnKeyReleased(e->{onKeyRelease(e);});
+		FocusFixer.setFocusElement(this);
 	}
 	
 	private void onKeyPress(KeyEvent e){
@@ -78,12 +80,14 @@ public class LevelLayoutPane extends VBox{
 		
 		textInput.setVisible(false);		
 		screen.start();
+		FocusFixer.fixFocus();
 	}
 	
 	private void cancelInput(){
 		print("Received cancel");
 		textInput.setVisible(false);		
 		screen.start();
+		FocusFixer.fixFocus();
 	}
 	
 	public void switchToPlay(){
@@ -152,9 +156,7 @@ public class LevelLayoutPane extends VBox{
 		playLevelMenu.setOnAction(e->{switchToPlay();});
 		MenuItem quitMenu = new MenuItem("Quit");
 		quitMenu.setOnAction(e->{Platform.exit();});
-		MenuItem requestFocusMenu = new MenuItem("Request Focus");
-		requestFocusMenu.setOnAction(e->{this.requestFocus();});
-		fileMenu.getItems().addAll(saveMenu, saveAsMenu, loadMenu, editLevelMenu, playLevelMenu, quitMenu, requestFocusMenu);
+		fileMenu.getItems().addAll(saveMenu, saveAsMenu, loadMenu, editLevelMenu, playLevelMenu, quitMenu);
 		
 		// Set up edit level menu
 		Menu addMenu = new Menu("Add");
